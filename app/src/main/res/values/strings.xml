@@ -1,0 +1,45 @@
+<resources>
+    <string name="app_name">PhoneTime</string>
+    <string name="block_button">Blocked apps</string>
+    <string name="stats_title">Stats</string>
+
+    <string name="pie_chart_fragment">Pie-chart fragment</string>
+    <string name="list_fragment">List fragment</string>
+    <string name="trends_fragment">Trends fragment</string>
+
+    <string name="title_activity_blocked_apps">Blocked Apps</string>
+    <string name="app_logo">App Logo</string>
+    <string name="delete_rule">Delete rule</string>
+    <string name="edit_rule">Edit rule</string>
+    <string name="title_activity_block_an_app">Block an app</string>
+    <string name="block_opt_between">Between</string>
+    <string name="block_opt_after">After using for</string>
+    <string name="and">and</string>
+    <string name="choose_an_app">Choose an app:</string>
+
+    <string-array name="time_units">
+        <item>min</item>
+        <item>hours</item>
+    </string-array>
+
+    <string-array name="time_frames_block">
+        <item>day</item>
+        <item>week</item>
+    </string-array>
+
+    <string-array name="time_frames_stats">
+        <item>Today</item>
+        <item>This week</item>
+        <item>This month</item>
+    </string-array>
+
+    <string-array name="types_stats">
+        <item>Pie chart</item>
+        <item>List</item>
+        <item>Trends</item>
+    </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="no_rules_yet">No rule are set yet. Click the + button to create a new rule.</string>
+</resources>
