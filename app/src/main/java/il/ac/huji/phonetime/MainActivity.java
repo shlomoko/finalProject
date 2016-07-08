@@ -6,9 +6,9 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.Spinner;
+import android.widget.RadioGroup;
+import android.widget.ToggleButton;
 
 public class MainActivity extends AppCompatActivity
         implements PieChart.OnFragmentInteractionListener, TrendsFragment.OnFragmentInteractionListener{
@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity
 
         setFragment(savedInstanceState);
         setBlockButton();
-        setSpinners();
+        setToggels();
     }
 
     // https://developer.android.com/training/basics/fragments/fragment-ui.html
@@ -60,38 +60,53 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void setSpinners(){
-        Spinner dispTypeSpinner = (Spinner)findViewById(R.id.displayTypeSpinner);
-        if (dispTypeSpinner != null) {
-            dispTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    //replace fragment
-                    Fragment newFrag;// = null;
-                    switch (position){
-                        case 0: //pie
-                            newFrag = new PieChart();
-                            break;
-                        case 1: //list
-                            newFrag = null;//TODO
-                            break;
-                        case 2: //trends
-                            newFrag = new TrendsFragment();
-                            break;
-                        default:
-                            newFrag = null;
-                            break;
-                    }
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container, newFrag).commit();
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) { }
-            });
+    static final RadioGroup.OnCheckedChangeListener ToggleListener = new RadioGroup.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(final RadioGroup radioGroup, final int i) {
+            for (int j = 0; j < radioGroup.getChildCount(); j++) {
+                final ToggleButton view = (ToggleButton) radioGroup.getChildAt(j);
+                view.setChecked(view.getId() == i);
+            }
         }
+    };
 
-        //TODO time-frame spinner listener: send params to current fragment
+    private void setToggels(){
+        RadioGroup group = (RadioGroup)findViewById(R.id.typesGroup);
+        if (group != null) {
+            group.setOnCheckedChangeListener(ToggleListener);
+        }
+        group = (RadioGroup)findViewById(R.id.timeFrameGroup);
+        if (group != null) {
+            group.setOnCheckedChangeListener(ToggleListener);
+        }
+    }
+
+    public void onTypeToggle(View view){
+        int checkedId = view.getId();
+        ((RadioGroup)view.getParent()).check(checkedId);
+        //replace fragment
+        Fragment newFrag;// = null;
+        switch (checkedId){
+            case R.id.btn_pie:
+                newFrag = new PieChart();
+                break;
+            case R.id.btn_list:
+                newFrag = null;//TODO
+                break;
+            case R.id.btn_trends:
+                newFrag = new TrendsFragment();
+                break;
+            default:
+                return;
+        }
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, newFrag).commit();
+    }
+
+    public void onTimeFrameToggle(View view){
+        int checkedId = view.getId();
+        ((RadioGroup)view.getParent()).check(checkedId);
+        //TODO send this value to current fragment
     }
 
     @Override

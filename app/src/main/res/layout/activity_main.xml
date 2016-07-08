@@ -30,26 +30,67 @@
         android:background="@color/colorPrimary"
         android:padding="6dp"/>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
+    <RadioGroup android:id="@+id/typesGroup"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal">
-
-        <Spinner
-            android:layout_width="match_parent"
+        android:orientation="horizontal">
+        <ToggleButton android:id="@+id/btn_pie"
             android:layout_height="wrap_content"
-            android:id="@+id/timeFrameSpinner"
+            android:layout_width="fill_parent"
             android:layout_weight="1"
-            android:entries="@array/time_frames_stats"/>
-
-        <Spinner
-            android:layout_width="match_parent"
+            android:textSize="14sp"
+            android:textOn="@string/stats_pie"
+            android:textOff="@string/stats_pie"
+            android:checked="true"
+            android:onClick="onTypeToggle"/>
+        <ToggleButton android:id="@+id/btn_list"
             android:layout_height="wrap_content"
-            android:id="@+id/displayTypeSpinner"
+            android:layout_width="fill_parent"
             android:layout_weight="1"
-            android:entries="@array/types_stats"/>
-    </LinearLayout>
+            android:textSize="14sp"
+            android:textOn="@string/stats_list"
+            android:textOff="@string/stats_list"
+            android:onClick="onTypeToggle"/>
+        <ToggleButton android:id="@+id/btn_trends"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_weight="1"
+            android:textSize="14sp"
+            android:textOn="@string/stats_trends"
+            android:textOff="@string/stats_trends"
+            android:onClick="onTypeToggle" />
+    </RadioGroup>
+
+    <RadioGroup android:id="@+id/timeFrameGroup"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ToggleButton android:id="@+id/btn_day"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_weight="1"
+            android:textSize="14sp"
+            android:textOn="@string/time_frame_day"
+            android:textOff="@string/time_frame_day"
+            android:checked="true"
+            android:onClick="onTimeFrameToggle"/>
+        <ToggleButton android:id="@+id/btn_week"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_weight="1"
+            android:textSize="14sp"
+            android:textOn="@string/time_frame_week"
+            android:textOff="@string/time_frame_week"
+            android:onClick="onTimeFrameToggle"/>
+        <ToggleButton android:id="@+id/btn_month"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_weight="1"
+            android:textSize="14sp"
+            android:textOn="@string/time_frame_month"
+            android:textOff="@string/time_frame_month"
+            android:onClick="onTimeFrameToggle"/>
+    </RadioGroup>
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/fragment_container"
