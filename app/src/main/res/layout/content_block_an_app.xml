@@ -28,6 +28,7 @@
             android:orientation="horizontal">
 
             <EditText
+                android:id="@+id/time_amount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="2"
@@ -43,7 +44,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=" a "
+                android:text="@string/a"
                 android:textSize="18sp"/>
 
             <Spinner

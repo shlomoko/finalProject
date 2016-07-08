@@ -37,4 +37,5 @@
     <string name="stats_trends">Trends</string>
     <string name="stats_list">List</string>
     <string name="stats_pie">Pie chart</string>
+    <string name="a">a</string>
 </resources>
