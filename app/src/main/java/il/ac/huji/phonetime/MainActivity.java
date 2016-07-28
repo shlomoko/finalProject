@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.ToggleButton;
 
+import java.util.HashMap;
+
 public class MainActivity extends AppCompatActivity
         implements PieChartFragment.OnFragmentInteractionListener, TrendsFragment.OnFragmentInteractionListener{
 
@@ -39,7 +41,20 @@ public class MainActivity extends AppCompatActivity
 
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments
-            firstFragment.setArguments(getIntent().getExtras());
+            //firstFragment.setArguments(getIntent().getExtras());
+
+            HashMap<String, int[]> map = new HashMap<>();
+            map.put("Facebbok", new int[]{2,0,5,3});
+            map.put("Whatsapp", new int[]{4,1,0,2});
+            map.put("Calendar", new int[]{8,2,0,1});
+            map.put("Chrome", new int[]{2,5,0,1});
+
+            Bundle args = new Bundle();
+            args.putSerializable(PieChartFragment.APP_TIMES, map);
+            args.putInt(PieChartFragment.TOTAL_TIME, 36);
+
+            firstFragment.setArguments(args);
+
 
             // Add the fragment to the 'fragment_container' FrameLayout
             getSupportFragmentManager().beginTransaction()

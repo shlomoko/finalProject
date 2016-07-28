@@ -15,7 +15,8 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
-
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -26,14 +27,12 @@ import java.util.ArrayList;
  * create an instance of this fragment.
  */
 public class PieChartFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+   // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    public static final String APP_TIMES = "appTimes";
+    public static final String TOTAL_TIME = "totalTime";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private Map<String, int[]> mAppTimes;
+    private int mTotalTime;
 
     private OnFragmentInteractionListener mListener;
 
@@ -45,16 +44,15 @@ public class PieChartFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param appTimes Parameter 1.
+     * @param totalTime Parameter 2.
      * @return A new instance of fragment PieChartFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static PieChartFragment newInstance(String param1, String param2) {
+    public static PieChartFragment newInstance(HashMap<String, int[]> appTimes, int totalTime) {
         PieChartFragment fragment = new PieChartFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putSerializable(APP_TIMES, appTimes);
+        args.putInt(TOTAL_TIME, totalTime);
         fragment.setArguments(args);
         return fragment;
     }
@@ -63,8 +61,8 @@ public class PieChartFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mAppTimes = (Map<String, int[]>) getArguments().getSerializable(APP_TIMES);
+            mTotalTime = getArguments().getInt(TOTAL_TIME);
         }
     }
 
@@ -76,12 +74,12 @@ public class PieChartFragment extends Fragment {
         PieChart pie = (PieChart) v.findViewById(R.id.chart);
 
         ArrayList<PieEntry> entries = new ArrayList<>();
-        entries.add(new PieEntry(0.25f, "label 1"));
-        entries.add(new PieEntry(0.5f, "label 2"));
-        entries.add(new PieEntry(0.14f, "label 3"));
-        entries.add(new PieEntry(0.11f, "label 4"));
+        for (Map.Entry<String, int[]> entry : mAppTimes.entrySet()) {
+            int sum = sumArray(entry.getValue());
+            entries.add(new PieEntry((float)sum/mTotalTime, entry.getKey()));
+        }
         PieDataSet dataset = new PieDataSet(entries, "label woohoo");
-        dataset.setColors(ColorTemplate.PASTEL_COLORS);
+        dataset.setColors(ColorTemplate.JOYFUL_COLORS);
 
         PieData data = new PieData(dataset);
         pie.setData(data);
@@ -91,11 +89,10 @@ public class PieChartFragment extends Fragment {
         return v;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+    private static int sumArray(int[] a){
+        int sum = 0;
+        for (int num : a) sum += num;
+        return sum;
     }
 
     @Override
