@@ -8,16 +8,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.utils.ColorTemplate;
+
+import java.util.ArrayList;
+
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link PieChart.OnFragmentInteractionListener} interface
+ * {@link PieChartFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link PieChart#newInstance} factory method to
+ * Use the {@link PieChartFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PieChart extends Fragment {
+public class PieChartFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -29,7 +37,7 @@ public class PieChart extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public PieChart() {
+    public PieChartFragment() {
         // Required empty public constructor
     }
 
@@ -39,11 +47,11 @@ public class PieChart extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment PieChart.
+     * @return A new instance of fragment PieChartFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static PieChart newInstance(String param1, String param2) {
-        PieChart fragment = new PieChart();
+    public static PieChartFragment newInstance(String param1, String param2) {
+        PieChartFragment fragment = new PieChartFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -61,10 +69,26 @@ public class PieChart extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_pie_chart, container, false);
+        View v = inflater.inflate(R.layout.fragment_pie_chart, container, false);
+
+        PieChart pie = (PieChart) v.findViewById(R.id.chart);
+
+        ArrayList<PieEntry> entries = new ArrayList<>();
+        entries.add(new PieEntry(0.25f, "label 1"));
+        entries.add(new PieEntry(0.5f, "label 2"));
+        entries.add(new PieEntry(0.14f, "label 3"));
+        entries.add(new PieEntry(0.11f, "label 4"));
+        PieDataSet dataset = new PieDataSet(entries, "label woohoo");
+        dataset.setColors(ColorTemplate.PASTEL_COLORS);
+
+        PieData data = new PieData(dataset);
+        pie.setData(data);
+        pie.setDescription("");
+        pie.setDrawHoleEnabled(false);
+
+        return v;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

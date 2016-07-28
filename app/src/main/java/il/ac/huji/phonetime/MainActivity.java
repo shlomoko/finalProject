@@ -11,7 +11,7 @@ import android.widget.RadioGroup;
 import android.widget.ToggleButton;
 
 public class MainActivity extends AppCompatActivity
-        implements PieChart.OnFragmentInteractionListener, TrendsFragment.OnFragmentInteractionListener{
+        implements PieChartFragment.OnFragmentInteractionListener, TrendsFragment.OnFragmentInteractionListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity
             }
 
             // Create a new Fragment to be placed in the activity layout
-            PieChart firstFragment = new PieChart();
+            PieChartFragment firstFragment = new PieChartFragment();
 
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments
@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity
         Fragment newFrag;// = null;
         switch (checkedId){
             case R.id.btn_pie:
-                newFrag = new PieChart();
+                newFrag = new PieChartFragment();
                 break;
             case R.id.btn_list:
                 newFrag = null;//TODO

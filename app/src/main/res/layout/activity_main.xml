@@ -23,12 +23,12 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/stats_title"
         android:layout_gravity="center_horizontal"
         android:gravity="center"
         android:background="@color/colorPrimary"
-        android:padding="6dp"/>
+        android:padding="6dp"
+        android:textColor="@android:color/white"/>
 
     <RadioGroup android:id="@+id/typesGroup"
         android:layout_width="fill_parent"
@@ -95,7 +95,6 @@
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="@dimen/activity_horizontal_margin"/>
+        android:layout_height="match_parent"/>
 
 </LinearLayout>
