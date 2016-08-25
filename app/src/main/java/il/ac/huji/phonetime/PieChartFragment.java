@@ -69,16 +69,16 @@ public class PieChartFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_pie_chart, container, false);
 
-        PieChart pie = (PieChart) v.findViewById(R.id.chart);
+        PieChart pie = (PieChart) v.findViewById(R.id.pie_chart);
 
         ArrayList<PieEntry> entries = new ArrayList<>();
         for (Map.Entry<String, int[]> entry : mAppTimes.entrySet()) {
             entries.add(new PieEntry(sumArray(entry.getValue()), entry.getKey()));
         }
-        PieDataSet dataset = new PieDataSet(entries, "label woohoo");
-        dataset.setColors(ColorTemplate.JOYFUL_COLORS);
+        PieDataSet dataSet = new PieDataSet(entries, "pie chart woohoo");
+        dataSet.setColors(ColorTemplate.JOYFUL_COLORS);
 
-        PieData data = new PieData(dataset);
+        PieData data = new PieData(dataSet);
         data.setValueFormatter(new ValueFormatter() {
             @Override
             public String getFormattedValue(float value, Entry e, int index, ViewPortHandler vph) {

@@ -110,6 +110,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.btn_trends:
                 newFrag = new TrendsFragment();
+                newFrag.setArguments(args);
                 break;
             default:
                 return;
