@@ -1,5 +1,8 @@
 package il.ac.huji.phonetime;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +13,8 @@ import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.ToggleButton;
 
+import com.firebase.client.Firebase;
+
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity
@@ -19,10 +24,26 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        Firebase.setAndroidContext(this);
         setFragment(savedInstanceState);
         setBlockButton();
         setToggels();
+        scheduleAlarm();
+    }
+    private static final long INTERVAL_ONE_MINUTE = 60 * 1000;
+    // Setup a recurring alarm every half hour
+    public void scheduleAlarm() {
+        // Construct an intent that will execute the AlarmReceiver
+        Intent intent = new Intent(getApplicationContext(), AlarmRec.class);
+        // Create a PendingIntent to be triggered when the alarm goes off
+        final PendingIntent pIntent = PendingIntent.getBroadcast(this, AlarmRec.REQUEST_CODE,
+                intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        // Setup periodic alarm every 5 seconds
+        long firstMillis = System.currentTimeMillis(); // alarm is set right away
+        AlarmManager alarm = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+        // First parameter is the type: ELAPSED_REALTIME, ELAPSED_REALTIME_WAKEUP, RTC_WAKEUP
+        alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, firstMillis,
+                INTERVAL_ONE_MINUTE, pIntent);
     }
 
     // https://developer.android.com/training/basics/fragments/fragment-ui.html
@@ -129,3 +150,4 @@ public class MainActivity extends AppCompatActivity
 
     }
 }
+
