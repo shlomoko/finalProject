@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity
         AlarmManager alarm = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
         // First parameter is the type: ELAPSED_REALTIME, ELAPSED_REALTIME_WAKEUP, RTC_WAKEUP
         alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, firstMillis,
-                INTERVAL_ONE_MINUTE, pIntent);
+                2000, pIntent);
     }
 
     // https://developer.android.com/training/basics/fragments/fragment-ui.html
