@@ -65,13 +65,15 @@ public class CheckRunningApp extends IntentService {
         }
         final String applicationName = (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
         Date date = new Date();
-        writeNewUser(applicationName, date.getTime());
+        writeNewUser(currentApp, date.getTime());
         //Log.i("current_app_name", applicationName);//tasks.get(0).processName);
     }
-
+    String s;
     private void writeNewUser(String packageName, long timeStamp) {
         use user = new use(packageName, timeStamp);
-
-        mRootRef.child("uses").setValue(user);
+        s = String.valueOf(timeStamp);
+        if (!(packageName.contains("desktop") || packageName.contains("Desktop"))) {
+            mRootRef.child("uses").child(s).setValue(user);
+        }
     }
 }

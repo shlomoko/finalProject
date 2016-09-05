@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity
         setToggels();
         scheduleAlarm();
     }
-    private static final long INTERVAL_ONE_MINUTE = 60 * 1000;
+    private static final long INTERVAL_TEN_SECONDS = 10 * 1000;
     // Setup a recurring alarm every half hour
     public void scheduleAlarm() {
         // Construct an intent that will execute the AlarmReceiver
@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity
         AlarmManager alarm = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
         // First parameter is the type: ELAPSED_REALTIME, ELAPSED_REALTIME_WAKEUP, RTC_WAKEUP
         alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, firstMillis,
-                2000, pIntent);
+                INTERVAL_TEN_SECONDS, pIntent);
     }
 
     // https://developer.android.com/training/basics/fragments/fragment-ui.html
