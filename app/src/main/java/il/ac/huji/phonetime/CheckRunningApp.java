@@ -8,8 +8,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.util.Log;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.Date;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -22,7 +25,9 @@ public class CheckRunningApp extends IntentService {
         super("CheckRunningApp");
     }
 
+    DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
     String currentApp;
+    long currentTime;
     @Override
     protected void onHandleIntent(Intent intent) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
@@ -49,7 +54,7 @@ public class CheckRunningApp extends IntentService {
 //        Context mContext = this; //##################### TODO NOT SURE ###########################
 //        ActivityManager manager = (ActivityManager)mContext.getSystemService(Context.ACTIVITY_SERVICE);
 //        List<ActivityManager.RunningAppProcessInfo> tasks = manager.getRunningAppProcesses();
-        Log.i("current_app", currentApp);//tasks.get(0).processName);
+        //Log.i("current_app", currentApp);//tasks.get(0).processName);
 //        Log.i("CheckRunningApp", "Service running");
         final PackageManager pm = getApplicationContext().getPackageManager();
         ApplicationInfo ai;
@@ -59,7 +64,14 @@ public class CheckRunningApp extends IntentService {
             ai = null;
         }
         final String applicationName = (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
+        Date date = new Date();
+        writeNewUser(applicationName, date.getTime());
+        //Log.i("current_app_name", applicationName);//tasks.get(0).processName);
+    }
 
-        Log.i("current_app_name", applicationName);//tasks.get(0).processName);
+    private void writeNewUser(String packageName, long timeStamp) {
+        use user = new use(packageName, timeStamp);
+
+        mRootRef.child("uses").setValue(user);
     }
 }
