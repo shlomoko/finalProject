@@ -20,6 +20,8 @@ import java.util.HashMap;
 public class MainActivity extends AppCompatActivity
         implements PieChartFragment.OnFragmentInteractionListener, TrendsFragment.OnFragmentInteractionListener{
 
+    Bundle args = new Bundle();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,10 +72,7 @@ public class MainActivity extends AppCompatActivity
             map.put("Calendar", new int[]{8,2,0,1});
             map.put("Chrome", new int[]{2,5,0,1});
 
-            Bundle args = new Bundle();
             args.putSerializable(PieChartFragment.APP_TIMES, map);
-            args.putInt(PieChartFragment.TOTAL_TIME, 36);
-
             firstFragment.setArguments(args);
 
 
@@ -121,16 +120,18 @@ public class MainActivity extends AppCompatActivity
         int checkedId = view.getId();
         ((RadioGroup)view.getParent()).check(checkedId);
         //replace fragment
-        Fragment newFrag;// = null;
+        Fragment newFrag;
         switch (checkedId){
             case R.id.btn_pie:
                 newFrag = new PieChartFragment();
+                newFrag.setArguments(args);
                 break;
             case R.id.btn_list:
                 newFrag = null;//TODO
                 break;
             case R.id.btn_trends:
                 newFrag = new TrendsFragment();
+                newFrag.setArguments(args);
                 break;
             default:
                 return;
