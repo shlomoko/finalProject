@@ -24,7 +24,7 @@ public class CheckRunningApp extends IntentService {
     public CheckRunningApp() {
         super("CheckRunningApp");
     }
-
+//hi
     DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
     String currentApp;
     long currentTime;
