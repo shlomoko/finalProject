@@ -7,6 +7,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +28,9 @@ public class ListFragment extends Fragment {
     private Map<String, int[]> mAppTimes;
 
     private OnFragmentInteractionListener mListener;
+    private SimpleCursorAdapter adapter;
+    private ListView listView;
+    private Context activity;
 
     public ListFragment() {
         // Required empty public constructor
@@ -55,10 +60,13 @@ public class ListFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_list, container, false);
+        View v = inflater.inflate(R.layout.fragment_list, container, false);
+        listView = (ListView) v.findViewById(R.id.list);
+        //adapter = new ListAdapter(activity, R.)//TODO
+        listView.setAdapter(adapter);
+        return v;
     }
 
     @Override
@@ -70,6 +78,7 @@ public class ListFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+        activity = context;
     }
 
     @Override

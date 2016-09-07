@@ -13,7 +13,9 @@ import android.widget.ToggleButton;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity
-        implements PieChartFragment.OnFragmentInteractionListener, TrendsFragment.OnFragmentInteractionListener{
+        implements PieChartFragment.OnFragmentInteractionListener,
+                    TrendsFragment.OnFragmentInteractionListener,
+                    ListFragment.OnFragmentInteractionListener{
 
     Bundle args = new Bundle();
 
@@ -106,7 +108,8 @@ public class MainActivity extends AppCompatActivity
                 newFrag.setArguments(args);
                 break;
             case R.id.btn_list:
-                newFrag = null;//TODO
+                newFrag = new ListFragment();
+                newFrag.setArguments(args);
                 break;
             case R.id.btn_trends:
                 newFrag = new TrendsFragment();
