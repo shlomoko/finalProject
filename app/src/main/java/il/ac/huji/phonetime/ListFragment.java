@@ -8,37 +8,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.AxisBase;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.AxisValueFormatter;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link TrendsFragment.OnFragmentInteractionListener} interface
+ * {@link ListFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link TrendsFragment#newInstance} factory method to
+ * Use the {@link ListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class TrendsFragment extends Fragment {
+public class ListFragment extends Fragment {
     public static final String APP_TIMES = "appTimes";
 
     private Map<String, int[]> mAppTimes;
 
     private OnFragmentInteractionListener mListener;
 
-    public TrendsFragment() {
+    public ListFragment() {
         // Required empty public constructor
     }
 
@@ -47,10 +36,10 @@ public class TrendsFragment extends Fragment {
      * this fragment using the provided parameters.
      *
      * @param appTimes Parameter 1.
-     * @return A new instance of fragment TrendsFragment.
+     * @return A new instance of fragment ListFragment.
      */
-    public static TrendsFragment newInstance(HashMap<String, int[]> appTimes) {
-        TrendsFragment fragment = new TrendsFragment();
+    public static ListFragment newInstance(HashMap<String, int[]> appTimes) {
+        ListFragment fragment = new ListFragment();
         Bundle args = new Bundle();
         args.putSerializable(APP_TIMES, appTimes);
         fragment.setArguments(args);
@@ -69,42 +58,7 @@ public class TrendsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_trends, container, false);
-
-        LineChart graph = (LineChart) v.findViewById(R.id.line_chart);
-
-        List<ILineDataSet> dataSets = new ArrayList<>();
-        for (Map.Entry<String, int[]> entry : mAppTimes.entrySet()){
-            ArrayList<Entry> entries = new ArrayList<>();
-            for (int i = 0; i < entry.getValue().length; i++){
-                entries.add(new Entry(i, entry.getValue()[i]));
-            }
-            LineDataSet dataSet = new LineDataSet(entries, entry.getKey());
-            dataSet.setDrawValues(false);
-            dataSets.add(dataSet);
-        }
-
-        LineData data = new LineData(dataSets);
-        graph.setData(data);
-        graph.setDescription("");
-
-        graph.getAxisRight().setEnabled(false);
-        graph.getAxisLeft().setSpaceBottom(0);
-        graph.getAxisLeft().setValueFormatter(new AxisValueFormatter() {
-            @Override
-            public String getFormattedValue(float value, AxisBase axis) {
-                return ((int) value) + " min.";
-            }
-
-            @Override
-            public int getDecimalDigits() {
-                return 0;
-            }
-        });
-        graph.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
-        graph.getXAxis().setDrawGridLines(false);
-
-        return v;
+        return inflater.inflate(R.layout.fragment_list, container, false);
     }
 
     @Override
