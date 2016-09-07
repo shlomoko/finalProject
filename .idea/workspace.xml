@@ -21,6 +21,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="27a0deb5-a429-4cee-b60e-98fc5ee59c25" name="Default" comment="added classes for list fragment">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="finalProject.iws" />
@@ -2245,7 +2246,13 @@
       <option name="project" value="LOCAL" />
       <updated>1473266689221</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="added classes for list fragment">
+      <created>1473267377050</created>
+      <option name="number" value="00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1473267377050</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TodoView">

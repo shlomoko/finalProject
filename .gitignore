@@ -36,6 +36,7 @@ proguard/
 *.iml
 /.idea/workspace.xml
 /.idea/libraries
+/.idea/runConfigurations.xml
 
 # Keystore files
 *.jks
