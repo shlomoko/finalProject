@@ -45,8 +45,8 @@ public class BlockAnAppActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     phoneIdHashed = getDeviceId();
-                    //TODO GET PREVIOUS LIST AND ADD.
-                    mRootRef.child(phoneIdHashed).child("blocked").child(s).setValue(user);
+                    //TODO GET PREVIOUS BLOCKED OBJECT LIST AND APPEND NEW.
+//                    mRootRef.child(phoneIdHashed).child("blocked").setValue(blockedList);
                     Toast.makeText(getApplicationContext(), "Your rule was saved", Toast.LENGTH_SHORT).show();
                     finish();
                 }

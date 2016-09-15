@@ -72,7 +72,8 @@ public class CheckRunningApp extends IntentService {
         use user = new use(packageName, timeStamp);
         s = String.valueOf(timeStamp);
         phoneIdHashed = getDeviceId();
-        if (!(packageName.contains("desktop") || packageName.contains("Desktop"))) {
+        if (!(packageName.contains("desktop") || packageName.contains("Desktop")
+                || packageName.contains("launcher")|| packageName.contains("Launcher"))) {
             mRootRef.child(phoneIdHashed).child("uses").child(s).setValue(user);
         }
     }
