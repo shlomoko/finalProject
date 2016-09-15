@@ -9,15 +9,15 @@ import android.content.Intent;
  */
 public class AlarmRec extends BroadcastReceiver {
     public static final int REQUEST_CODE = 12345;
-    public static final String ACTION = "com.codepath.example.servicesdemo.alarm";
+//    public static final String ACTION = "com.codepath.example.servicesdemo.alarm";
 
     // Triggered by the Alarm periodically (starts the service to run task)
     @Override
     public void onReceive(Context context, Intent intent) {
         Intent i = new Intent(context, CheckRunningApp.class);
         i.putExtra("foo", "bar");
-        if (intent.getAction().equals(intent.ACTION_SCREEN_ON)) {
+//        if (intent.getAction().equals(intent.ACTION_SCREEN_ON)) {
             context.startService(i);
-        }
+//        }
     }
 }
