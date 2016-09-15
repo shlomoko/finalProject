@@ -1,14 +1,21 @@
 package il.ac.huji.phonetime;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.UUID;
 
 public class BlockAnAppActivity extends AppCompatActivity {
 
@@ -17,6 +24,8 @@ public class BlockAnAppActivity extends AppCompatActivity {
     private Spinner timeUnitsSpinner;
     private EditText startTime;
     private EditText endTime;
+    private String phoneIdHashed;
+    DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +44,9 @@ public class BlockAnAppActivity extends AppCompatActivity {
             okButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //TODO save to DB
+                    phoneIdHashed = getDeviceId();
+                    //TODO GET PREVIOUS LIST AND ADD.
+                    mRootRef.child(phoneIdHashed).child("blocked").child(s).setValue(user);
                     Toast.makeText(getApplicationContext(), "Your rule was saved", Toast.LENGTH_SHORT).show();
                     finish();
                 }
@@ -68,5 +79,17 @@ public class BlockAnAppActivity extends AppCompatActivity {
             });
             radioGroup.check(R.id.rb_after);
         }
+    }
+
+    private String getDeviceId(){
+        final TelephonyManager tm = (TelephonyManager) getBaseContext().getSystemService(Context.TELEPHONY_SERVICE);
+
+        String tmDevice = "" + tm.getDeviceId();
+        String tmSerial = "" + tm.getSimSerialNumber();
+        String androidId = "" + android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+
+        UUID deviceUuid = new UUID(androidId.hashCode(), ((long)tmDevice.hashCode() << 32) | tmSerial.hashCode());
+        String deviceId = deviceUuid.toString();
+        return  deviceId;
     }
 }
