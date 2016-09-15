@@ -16,8 +16,8 @@ public class AlarmRec extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Intent i = new Intent(context, CheckRunningApp.class);
         i.putExtra("foo", "bar");
-//        if (intent.getAction().equals(intent.ACTION_SCREEN_ON)) {
+        if (intent.getAction().equals(intent.ACTION_SCREEN_ON)) {
             context.startService(i);
-//        }
+        }
     }
 }
