@@ -31,11 +31,11 @@
         <item>week</item>
     </string-array>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="no_rules_yet">No rule are set yet. Click the + button to create a new rule.</string>
     <string name="stats_trends">Trends</string>
     <string name="stats_list">List</string>
     <string name="stats_pie">Pie chart</string>
     <string name="a">a</string>
+    <string name="min_used">%d min.</string>
+    <string name="radio_button_symbol">Radio button symbol</string>
 </resources>

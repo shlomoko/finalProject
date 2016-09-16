@@ -9,10 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,10 +32,8 @@ import java.util.Map;
 public class PieChartFragment extends Fragment {
    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     public static final String APP_TIMES = "appTimes";
-    public static final String TOTAL_TIME = "totalTime";
 
     private Map<String, int[]> mAppTimes;
-    private int mTotalTime;
 
     private OnFragmentInteractionListener mListener;
 
@@ -45,14 +46,12 @@ public class PieChartFragment extends Fragment {
      * this fragment using the provided parameters.
      *
      * @param appTimes Parameter 1.
-     * @param totalTime Parameter 2.
      * @return A new instance of fragment PieChartFragment.
      */
-    public static PieChartFragment newInstance(HashMap<String, int[]> appTimes, int totalTime) {
+    public static PieChartFragment newInstance(HashMap<String, int[]> appTimes) {
         PieChartFragment fragment = new PieChartFragment();
         Bundle args = new Bundle();
         args.putSerializable(APP_TIMES, appTimes);
-        args.putInt(TOTAL_TIME, totalTime);
         fragment.setArguments(args);
         return fragment;
     }
@@ -62,7 +61,6 @@ public class PieChartFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mAppTimes = (Map<String, int[]>) getArguments().getSerializable(APP_TIMES);
-            mTotalTime = getArguments().getInt(TOTAL_TIME);
         }
     }
 
@@ -71,17 +69,23 @@ public class PieChartFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_pie_chart, container, false);
 
-        PieChart pie = (PieChart) v.findViewById(R.id.chart);
+        PieChart pie = (PieChart) v.findViewById(R.id.pie_chart);
 
         ArrayList<PieEntry> entries = new ArrayList<>();
         for (Map.Entry<String, int[]> entry : mAppTimes.entrySet()) {
-            int sum = sumArray(entry.getValue());
-            entries.add(new PieEntry((float)sum/mTotalTime, entry.getKey()));
+            entries.add(new PieEntry(sumArray(entry.getValue()), entry.getKey()));
         }
-        PieDataSet dataset = new PieDataSet(entries, "label woohoo");
-        dataset.setColors(ColorTemplate.JOYFUL_COLORS);
+        PieDataSet dataSet = new PieDataSet(entries, "pie chart woohoo");
+        dataSet.setColors(ColorTemplate.JOYFUL_COLORS);
 
-        PieData data = new PieData(dataset);
+        PieData data = new PieData(dataSet);
+        data.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, Entry e, int index, ViewPortHandler vph) {
+                return ((int) value) + " min.";
+            }
+        });
+
         pie.setData(data);
         pie.setDescription("");
         pie.setDrawHoleEnabled(false);

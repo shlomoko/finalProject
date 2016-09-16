@@ -18,7 +18,11 @@ import com.firebase.client.Firebase;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity
-        implements PieChartFragment.OnFragmentInteractionListener, TrendsFragment.OnFragmentInteractionListener{
+        implements PieChartFragment.OnFragmentInteractionListener,
+                    TrendsFragment.OnFragmentInteractionListener,
+                    ListFragment.OnFragmentInteractionListener{
+
+    Bundle args = new Bundle();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +35,7 @@ public class MainActivity extends AppCompatActivity
         scheduleAlarm();
     }
     private static final long INTERVAL_TEN_SECONDS = 10 * 1000;
+
     // Setup a recurring alarm every half hour
     public void scheduleAlarm() {
         // Construct an intent that will execute the AlarmReceiver
@@ -68,14 +73,10 @@ public class MainActivity extends AppCompatActivity
             map.put("Facebbok", new int[]{2,0,5,3});
             map.put("Whatsapp", new int[]{4,1,0,2});
             map.put("Calendar", new int[]{8,2,0,1});
-            map.put("Chrome", new int[]{2,5,0,1});
+            map.put("Chrome",   new int[]{2,5,0,1});
 
-            Bundle args = new Bundle();
             args.putSerializable(PieChartFragment.APP_TIMES, map);
-            args.putInt(PieChartFragment.TOTAL_TIME, 36);
-
             firstFragment.setArguments(args);
-
 
             // Add the fragment to the 'fragment_container' FrameLayout
             getSupportFragmentManager().beginTransaction()
@@ -121,16 +122,19 @@ public class MainActivity extends AppCompatActivity
         int checkedId = view.getId();
         ((RadioGroup)view.getParent()).check(checkedId);
         //replace fragment
-        Fragment newFrag;// = null;
+        Fragment newFrag;
         switch (checkedId){
             case R.id.btn_pie:
                 newFrag = new PieChartFragment();
+                newFrag.setArguments(args);
                 break;
             case R.id.btn_list:
-                newFrag = null;//TODO
+                newFrag = new ListFragment();
+                newFrag.setArguments(args);
                 break;
             case R.id.btn_trends:
                 newFrag = new TrendsFragment();
+                newFrag.setArguments(args);
                 break;
             default:
                 return;

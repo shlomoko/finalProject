@@ -19,10 +19,8 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.UUID;
 
-/**
- * Created by Shlomo on 28/07/2016.
- */
 public class CheckRunningApp extends IntentService {
+
     public CheckRunningApp() {
         super("CheckRunningApp");
     }
@@ -30,6 +28,7 @@ public class CheckRunningApp extends IntentService {
     DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
     String currentApp;
     long currentTime;
+
     @Override
     protected void onHandleIntent(Intent intent) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
@@ -38,12 +37,12 @@ public class CheckRunningApp extends IntentService {
             List<UsageStats> appList = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY,
                     time - 1000 * 1000, time);
             if (appList != null && appList.size() > 0) {
-                SortedMap<Long, UsageStats> mySortedMap = new TreeMap<Long, UsageStats>();
+                SortedMap<Long, UsageStats> mySortedMap = new TreeMap<>();
                 for (UsageStats usageStats : appList) {
                     mySortedMap.put(usageStats.getLastTimeUsed(),
                             usageStats);
                 }
-                if (mySortedMap != null && !mySortedMap.isEmpty()) {
+                if (!mySortedMap.isEmpty()) {
                     currentApp = mySortedMap.get(
                             mySortedMap.lastKey()).getPackageName();
                 }
@@ -66,6 +65,7 @@ public class CheckRunningApp extends IntentService {
         writeNewUser(currentApp, date.getTime());
         //Log.i("current_app_name", applicationName);//tasks.get(0).processName);
     }
+
     String s;
     String phoneIdHashed;
     private void writeNewUser(String packageName, long timeStamp) {
