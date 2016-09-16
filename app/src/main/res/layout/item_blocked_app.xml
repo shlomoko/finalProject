@@ -9,7 +9,7 @@
         android:layout_height="36dp"
         android:layout_weight="1"
         android:layout_gravity="center"
-        android:id="@+id/app_logo"
+        android:id="@+id/app_logo_blocked"
         android:src="@drawable/facebook_logo"
         android:contentDescription="@string/app_logo"/>
 

@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity
         scheduleAlarm();
     }
     private static final long INTERVAL_TEN_SECONDS = 10 * 1000;
+
     // Setup a recurring alarm every half hour
     public void scheduleAlarm() {
         // Construct an intent that will execute the AlarmReceiver
@@ -72,11 +73,10 @@ public class MainActivity extends AppCompatActivity
             map.put("Facebbok", new int[]{2,0,5,3});
             map.put("Whatsapp", new int[]{4,1,0,2});
             map.put("Calendar", new int[]{8,2,0,1});
-            map.put("Chrome", new int[]{2,5,0,1});
+            map.put("Chrome",   new int[]{2,5,0,1});
 
             args.putSerializable(PieChartFragment.APP_TIMES, map);
             firstFragment.setArguments(args);
-
 
             // Add the fragment to the 'fragment_container' FrameLayout
             getSupportFragmentManager().beginTransaction()

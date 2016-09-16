@@ -1,18 +1,27 @@
 package il.ac.huji.phonetime;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,13 +33,10 @@ import java.util.Map;
  */
 public class ListFragment extends Fragment {
     public static final String APP_TIMES = "appTimes";
+    private static final String TAG = "ListFragment";
 
     private Map<String, int[]> mAppTimes;
-
     private OnFragmentInteractionListener mListener;
-    private SimpleCursorAdapter adapter;
-    private ListView listView;
-    private Context activity;
 
     public ListFragment() {
         // Required empty public constructor
@@ -63,10 +69,28 @@ public class ListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_list, container, false);
-        listView = (ListView) v.findViewById(R.id.list);
-        //adapter = new ListAdapter(activity, R.)//TODO
-        listView.setAdapter(adapter);
+        ListView listView = (ListView) v.findViewById(R.id.list);
+        List<ListItem> list = new ArrayList<>();
+        ApplicationInfo ai;
+        PackageManager pm = getActivity().getApplicationContext().getPackageManager();
+        for (Map.Entry<String, int[]> entry : mAppTimes.entrySet()){
+            try {
+                ai = pm.getApplicationInfo(entry.getKey(), 0);
+                list.add(new ListItem((String) pm.getApplicationLabel(ai),
+                        sumArray(entry.getValue()), pm.getApplicationIcon(ai)));
+            } catch (final PackageManager.NameNotFoundException e) {
+                Log.d(TAG, "onCreateView: packageName unknown");
+            }
+        }
+        Collections.sort(list);
+        listView.setAdapter(new ListAdapter(getContext(), R.layout.item_list, R.id.txtAppName, R.id.txtTimeUsed, R.id.app_logo, list));
         return v;
+    }
+
+    private static int sumArray(int[] a){
+        int sum = 0;
+        for (int num : a) sum += num;
+        return sum;
     }
 
     @Override
@@ -78,7 +102,6 @@ public class ListFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
-        activity = context;
     }
 
     @Override
@@ -100,5 +123,73 @@ public class ListFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public class ListAdapter extends ArrayAdapter<ListItem> {
+
+        private int itemLayoutId;
+        private int nameViewId;
+        private int timeViewId;
+        private int iconViewId;
+        private Context context;
+        List<ListItem> list;
+
+        public ListAdapter(Context context, int resource, int nameViewResourceId,
+                           int timeViewResourceId, int iconViewResourceId, List<ListItem> apps) {
+            super(context, resource, nameViewResourceId, apps);
+            this.context = context;
+            this.itemLayoutId = resource;
+            nameViewId = nameViewResourceId;
+            timeViewId = timeViewResourceId;
+            iconViewId = iconViewResourceId;
+            list = apps;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View itemView = super.getView(position, convertView, parent);
+            if (null == itemView){
+                itemView = LayoutInflater.from(context).inflate(itemLayoutId, parent, false);
+            }
+            TextView nameView = (TextView) itemView.findViewById(nameViewId);
+            TextView timeView = (TextView) itemView.findViewById(timeViewId);
+            ImageView iconView = (ImageView) itemView.findViewById(iconViewId);
+
+            ListItem item = list.get(position);
+            nameView.setText(item.getAppName());
+            timeView.setText(getResources().getString(R.string.min_used, item.getTimeUsed()));
+            iconView.setImageDrawable(item.getIcon());
+
+            return itemView;
+        }
+    }
+
+    private class ListItem implements Comparable<ListItem>{
+        private String name;
+        private int time;
+        private Drawable icon;
+
+        ListItem(String appName, int timeUsed, Drawable appIcon){
+            name = appName;
+            time = timeUsed;
+            icon = appIcon;
+        }
+
+        public String getAppName(){
+            return name;
+        }
+
+        public int getTimeUsed(){
+            return time;
+        }
+
+        public Drawable getIcon() {
+            return icon;
+        }
+
+        @Override
+        public int compareTo(@NonNull ListItem another) {
+            return time - another.time;
+        }
     }
 }

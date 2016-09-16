@@ -36,4 +36,6 @@
     <string name="stats_list">List</string>
     <string name="stats_pie">Pie chart</string>
     <string name="a">a</string>
+    <string name="min_used">%d min.</string>
+    <string name="radio_button_symbol">Radio button symbol</string>
 </resources>
