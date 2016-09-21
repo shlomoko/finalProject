@@ -5,9 +5,16 @@
     tools:context="il.ac.huji.phonetime.ListFragment">
 
     <ListView
-        android:id="@+id/list"
+        android:id="@+id/dataView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </ListView>
+        android:layout_height="match_parent"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/emptyText"
+        android:text="@string/loading"
+        android:textSize="24sp"
+        android:gravity="center"/>
 
 </FrameLayout>

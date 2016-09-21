@@ -42,7 +42,7 @@
             android:textOn="@string/stats_pie"
             android:textOff="@string/stats_pie"
             android:checked="true"
-            android:onClick="onTypeToggle"/>
+            android:onClick="onTypeToggle" />
         <ToggleButton android:id="@+id/btn_list"
             android:layout_height="wrap_content"
             android:layout_width="fill_parent"

@@ -5,8 +5,16 @@
     tools:context=".PieChartFragment">
 
     <com.github.mikephil.charting.charts.PieChart
-        android:id="@+id/pie_chart"
+        android:id="@+id/dataView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/emptyText"
+        android:text="@string/loading"
+        android:textSize="24sp"
+        android:gravity="center"/>
 
 </FrameLayout>

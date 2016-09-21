@@ -6,18 +6,11 @@ import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.telephony.TelephonyManager;
-
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Date;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.UUID;
 
 public class CheckRunningApp extends IntentService {
 
@@ -25,17 +18,24 @@ public class CheckRunningApp extends IntentService {
         super("CheckRunningApp");
     }
 
-    DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
     String currentApp;
-    long currentTime;
 
     @Override
     protected void onHandleIntent(Intent intent) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            UsageStatsManager usm = (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);//"usagestats"
+            UsageStatsManager usm = (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);
             long time = System.currentTimeMillis();
             List<UsageStats> appList = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY,
                     time - 1000 * 1000, time);
+
+            /*Collections.sort(appList, new Comparator<UsageStats>() {
+                @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+                @Override
+                public int compare(UsageStats lhs, UsageStats rhs) {
+                    return lhs.getLastTimeUsed() - rhs.getLastTimeUsed() > 0? 1:-1;
+                }
+            });*/
+
             if (appList != null && appList.size() > 0) {
                 SortedMap<Long, UsageStats> mySortedMap = new TreeMap<>();
                 for (UsageStats usageStats : appList) {
@@ -43,50 +43,29 @@ public class CheckRunningApp extends IntentService {
                             usageStats);
                 }
                 if (!mySortedMap.isEmpty()) {
-                    currentApp = mySortedMap.get(
-                            mySortedMap.lastKey()).getPackageName();
+                    currentApp = mySortedMap.get(mySortedMap.lastKey())
+                                            .getPackageName();
                 }
+
+
             }
         } else {
             ActivityManager am = (ActivityManager) getBaseContext().getSystemService(ACTIVITY_SERVICE);
-            currentApp = am.getRunningTasks(1).get(0).topActivity .getPackageName();
+            currentApp = am.getRunningTasks(1).get(0).topActivity.getPackageName();
 
         }
 
-        final PackageManager pm = getApplicationContext().getPackageManager();
-        ApplicationInfo ai;
-        try {
-            ai = pm.getApplicationInfo( currentApp, 0);
-        } catch (final PackageManager.NameNotFoundException e) {
-            ai = null;
-        }
-        final String applicationName = (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
+        //final String applicationName = Utils.getAppName(getApplicationContext(), currentApp);
         Date date = new Date();
         writeNewUser(currentApp, date.getTime());
         //Log.i("current_app_name", applicationName);//tasks.get(0).processName);
     }
 
-    String s;
-    String phoneIdHashed;
     private void writeNewUser(String packageName, long timeStamp) {
-        use user = new use(packageName, timeStamp);
-        s = String.valueOf(timeStamp);
-        phoneIdHashed = getDeviceId();
-        if (!(packageName.contains("desktop") || packageName.contains("Desktop")
-                || packageName.contains("launcher")|| packageName.contains("Launcher"))) {
-            mRootRef.child(phoneIdHashed).child("uses").child(s).setValue(user);
+        Use use = new Use(packageName, timeStamp);
+        if (!(packageName.toLowerCase().contains("desktop") ||
+                packageName.toLowerCase().contains("launcher"))) {
+            FirebaseManager.addUse(use);
         }
-    }
-
-    private String getDeviceId(){
-        final TelephonyManager tm = (TelephonyManager) getBaseContext().getSystemService(Context.TELEPHONY_SERVICE);
-
-        String tmDevice = "" + tm.getDeviceId();
-        String tmSerial = "" + tm.getSimSerialNumber();
-        String androidId = "" + android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
-
-        UUID deviceUuid = new UUID(androidId.hashCode(), ((long)tmDevice.hashCode() << 32) | tmSerial.hashCode());
-        String deviceId = deviceUuid.toString();
-        return  deviceId;
     }
 }

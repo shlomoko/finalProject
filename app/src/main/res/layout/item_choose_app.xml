@@ -1,24 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/app_logo_choose"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:contentDescription="@string/app_logo"/>
+        android:layout_weight="1"
+        android:contentDescription="@string/app_logo"
+        tools:src="@drawable/facebook_logo"/>
 
     <TextView
         android:id="@+id/txtAppName"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textSize="20sp"/>
+        android:layout_weight="3"
+        android:textSize="20sp"
+        tools:text="Facebook" />
 
     <ImageView
         android:id="@+id/radio_btn"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:src="@android:drawable/radiobutton_on_background"
         android:contentDescription="@string/radio_button_symbol" />
 

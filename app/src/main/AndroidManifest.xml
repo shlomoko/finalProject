@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".BlockedAppsActivity"
+            android:name=".blocking.BlockedAppsActivity"
             android:label="@string/title_activity_blocked_apps"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar" >
@@ -32,9 +32,9 @@
                 android:value="il.ac.huji.phonetime.MainActivity" />
         </activity>
         <activity
-            android:name=".BlockAnAppActivity"
+            android:name=".blocking.BlockAnAppActivity"
             android:label="@string/title_activity_block_an_app"
-            android:parentActivityName=".BlockedAppsActivity"
+            android:parentActivityName=".blocking.BlockedAppsActivity"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
 
