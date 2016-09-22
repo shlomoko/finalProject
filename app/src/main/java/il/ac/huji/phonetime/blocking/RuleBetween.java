@@ -2,34 +2,34 @@ package il.ac.huji.phonetime.blocking;
 
 public class RuleBetween implements Rule{
     private int fromHours;
-    private int fromSeconds;
+    private int fromMinutes;
     private int toHours;
-    private int toSeconds;
+    private int toMinutes;
 
     public RuleBetween() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    public RuleBetween(int fromHours, int fromSeconds, int toHours, int toSeconds) {
+    public RuleBetween(int fromHours, int fromMinutes, int toHours, int toMinutes) {
         this.fromHours = fromHours;
-        this.fromSeconds = fromSeconds;
+        this.fromMinutes = fromMinutes;
         this.toHours = toHours;
-        this.toSeconds = toSeconds;
+        this.toMinutes = toMinutes;
     }
 
     public int getFromHours() {
         return fromHours;
     }
 
-    public int getFromSeconds() {
-        return fromSeconds;
+    public int getFromMinutes() {
+        return fromMinutes;
     }
 
     public int getToHours() {
         return toHours;
     }
 
-    public int getToSeconds() {
-        return toSeconds;
+    public int getToMinutes() {
+        return toMinutes;
     }
 }

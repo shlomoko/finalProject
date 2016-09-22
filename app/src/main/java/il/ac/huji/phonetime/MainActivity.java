@@ -253,16 +253,6 @@ public class MainActivity extends AppCompatActivity implements ValueEventListene
         Log.e("Firebase", "onCancelled", databaseError.toException());
     }
 
-    private Calendar zeroTime(Calendar time){
-        Calendar zeroed = new GregorianCalendar();
-        zeroed.setTimeInMillis(time.getTimeInMillis());
-        zeroed.set(Calendar.HOUR_OF_DAY, 0);
-        zeroed.set(Calendar.MINUTE, 0);
-        zeroed.set(Calendar.SECOND, 0);
-        zeroed.set(Calendar.MILLISECOND, 0);
-        return zeroed;
-    }
-
     private boolean compareDates(Calendar a, Calendar b){
         return a.get(Calendar.DAY_OF_MONTH) == b.get(Calendar.DAY_OF_MONTH)
                 && a.get(Calendar.MONTH) == b.get(Calendar.MONTH)
