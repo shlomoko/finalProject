@@ -25,12 +25,24 @@ public class FirebaseManager {
         mRootRef.child(phoneIdHashed).child("uses").push().setValue(use);
     }
 
-    public static void addRule(String pkgName, Rule rule){
-        mRootRef.child(phoneIdHashed).child("rules").child(pkgName).setValue(rule);
+    public static void addBetweenRule(String pkgName, Rule rule){
+        mRootRef.child(phoneIdHashed).child("rules").child("between").child(pkgName).setValue(rule);
+    }
+
+    public static void addAfterRule(String pkgName, Rule rule){
+        mRootRef.child(phoneIdHashed).child("rules").child("after").child(pkgName).setValue(rule);
     }
 
     public static void getUsesList(ValueEventListener listener){
         mRootRef.child(phoneIdHashed).child("uses").addListenerForSingleValueEvent(listener);
+    }
+
+    public static void getAfterList(ValueEventListener listener){
+        mRootRef.child(phoneIdHashed).child("rules").child("after").addListenerForSingleValueEvent(listener);
+    }
+
+    public static void getBetweenList(ValueEventListener listener){
+        mRootRef.child(phoneIdHashed).child("rules").child("between").addListenerForSingleValueEvent(listener);
     }
 
     private static String getDeviceId(Context context, ContentResolver contentRes){

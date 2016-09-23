@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_web_client_id" translatable="false">436082521714-lu254uqbck7iscmcf6soud206g8rkj7n.apps.googleusercontent.com</string>
+    <string name="firebase_database_url" translatable="false">https://phonetime-af916.firebaseio.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">436082521714</string>
+    <string name="google_api_key" translatable="false">AIzaSyBx7GVoSsLQDdbm6Xwx-LTnk0gkNvqcdGY</string>
+    <string name="google_app_id" translatable="false">1:436082521714:android:a5aade401cdc4c4f</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyBx7GVoSsLQDdbm6Xwx-LTnk0gkNvqcdGY</string>
+    <string name="google_storage_bucket" translatable="false">phonetime-af916.appspot.com</string>
+</resources>
