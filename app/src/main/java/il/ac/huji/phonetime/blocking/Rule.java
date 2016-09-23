@@ -1,3 +1,5 @@
 package il.ac.huji.phonetime.blocking;
 
-public interface Rule { }
+import java.io.Serializable;
+
+public interface Rule extends Serializable { }

@@ -48,6 +48,7 @@ public class BlockAnAppActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_block_an_app);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -55,6 +56,20 @@ public class BlockAnAppActivity extends AppCompatActivity {
         setConfirm();
         setRadio();
         setList();
+        setContents(getIntent());
+    }
+
+    private void setContents(Intent intent){
+        if (null == intent) return;
+        Bundle extras = intent.getExtras();
+        if (null == extras) return;
+        if (extras.containsKey("EXTRA_RULE") && extras.containsKey("EXTRA_PKG_NAME")) {
+            Rule rule = (Rule) extras.getSerializable("EXTRA_RULE");
+            // TODO fill fields
+            String pkgName = extras.getString("EXTRA_PKG_NAME");
+            // TODO set chosen app
+            // TODO disable apps list
+        }
     }
 
     private void setConfirm(){
