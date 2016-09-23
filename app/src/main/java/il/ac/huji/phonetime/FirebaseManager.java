@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.telephony.TelephonyManager;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
@@ -14,6 +15,9 @@ import il.ac.huji.phonetime.blocking.Rule;
 
 public class FirebaseManager {
 
+    private static String USES = "uses";
+    private static String RULES = "rules";
+
     private static DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
     private static String phoneIdHashed;
 
@@ -22,19 +26,27 @@ public class FirebaseManager {
     }
 
     public static void addUse(Use use){
-        mRootRef.child(phoneIdHashed).child("uses").push().setValue(use);
+        mRootRef.child(phoneIdHashed).child(USES).push().setValue(use);
     }
-
+    
     public static void addBetweenRule(String pkgName, Rule rule){
         mRootRef.child(phoneIdHashed).child("rules").child("between").child(pkgName).setValue(rule);
     }
 
-    public static void addAfterRule(String pkgName, Rule rule){
+    public static void addAfterRule(String pkgName, Rule rule) {
         mRootRef.child(phoneIdHashed).child("rules").child("after").child(pkgName).setValue(rule);
     }
 
     public static void getUsesList(ValueEventListener listener){
-        mRootRef.child(phoneIdHashed).child("uses").addListenerForSingleValueEvent(listener);
+        mRootRef.child(phoneIdHashed).child(USES).addListenerForSingleValueEvent(listener);
+    }
+
+    public static void getRulesChanges(ChildEventListener listener){
+        mRootRef.child(phoneIdHashed).child(RULES).addChildEventListener(listener);
+    }
+
+    public static void deleteRule(String pkgName){
+        mRootRef.child(phoneIdHashed).child(RULES).child(pkgName).removeValue();
     }
 
     public static void getAfterList(ValueEventListener listener){

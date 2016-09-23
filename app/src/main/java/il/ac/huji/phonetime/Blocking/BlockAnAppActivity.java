@@ -129,6 +129,7 @@ public class BlockAnAppActivity extends AppCompatActivity {
         final Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
         final PackageManager pm = getPackageManager();
+<<<<<<< HEAD
         final List<ResolveInfo> pkgAppsList = pm.queryIntentActivities( mainIntent, 0);
         Iterator<ResolveInfo> i = pkgAppsList.iterator();
         while (i.hasNext()) {
@@ -137,6 +138,9 @@ public class BlockAnAppActivity extends AppCompatActivity {
                 i.remove();
             }
         }
+=======
+        final List<ResolveInfo> pkgAppsList = pm.queryIntentActivities(mainIntent, 0);
+>>>>>>> origin/newBranch
         ListAdapter adapter = new ListAdapter(this, R.layout.item_choose_app,
                 R.id.txtAppName, R.id.radio_btn, R.id.app_logo_choose, new ArrayList<ListItem>());
         appsList.setAdapter(adapter);
