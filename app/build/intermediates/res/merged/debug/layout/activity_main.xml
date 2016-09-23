@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="il.ac.huji.phonetime.MainActivity"
+    android:orientation="vertical">
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/block_button"
+        android:id="@+id/blockButton"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:drawableEnd="@android:drawable/ic_menu_manage"
+        android:drawableRight="@android:drawable/ic_menu_manage"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/stats_title"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:background="@color/colorPrimary"
+        android:padding="6dp"
+        android:textColor="@android:color/white"/>
+
+    <RadioGroup android:id="@+id/typesGroup"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ToggleButton android:id="@+id/btn_pie"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_weight="1"
+            android:textSize="14sp"
+            android:textOn="@string/stats_pie"
+            android:textOff="@string/stats_pie"
+            android:checked="true"
+            android:onClick="onTypeToggle" />
+        <ToggleButton android:id="@+id/btn_list"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_weight="1"
+            android:textSize="14sp"
+            android:textOn="@string/stats_list"
+            android:textOff="@string/stats_list"
+            android:onClick="onTypeToggle"/>
+        <ToggleButton android:id="@+id/btn_trends"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_weight="1"
+            android:textSize="14sp"
+            android:textOn="@string/stats_trends"
+            android:textOff="@string/stats_trends"
+            android:onClick="onTypeToggle" />
+    </RadioGroup>
+
+    <RadioGroup android:id="@+id/timeFrameGroup"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ToggleButton android:id="@+id/btn_day"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_weight="1"
+            android:textSize="14sp"
+            android:textOn="@string/time_frame_day"
+            android:textOff="@string/time_frame_day"
+            android:checked="true"
+            android:onClick="onTimeFrameToggle"/>
+        <ToggleButton android:id="@+id/btn_week"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_weight="1"
+            android:textSize="14sp"
+            android:textOn="@string/time_frame_week"
+            android:textOff="@string/time_frame_week"
+            android:onClick="onTimeFrameToggle"/>
+        <ToggleButton android:id="@+id/btn_month"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_weight="1"
+            android:textSize="14sp"
+            android:textOn="@string/time_frame_month"
+            android:textOff="@string/time_frame_month"
+            android:onClick="onTimeFrameToggle"/>
+    </RadioGroup>
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>

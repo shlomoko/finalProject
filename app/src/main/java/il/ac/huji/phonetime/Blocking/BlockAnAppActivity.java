@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import il.ac.huji.phonetime.FirebaseManager;
@@ -87,15 +88,17 @@ public class BlockAnAppActivity extends AppCompatActivity {
                                                 RuleAfter.TimeUnits.MINS : RuleAfter.TimeUnits.HOURS,
                                         timeFrameSpinner.getSelectedItemPosition() == 0 ?
                                                 RuleAfter.TimeFrame.DAY : RuleAfter.TimeFrame.WEEK);
+                                FirebaseManager.addAfterRule(prevSelectedItem.getPackageName().replace('.', '-'), ruleType);
                                 break;
                             default:
                                 ruleType = new RuleBetween(Integer.parseInt(startHours.getText().toString()),
                                         Integer.parseInt(startMins.getText().toString()),
                                         Integer.parseInt(endHours.getText().toString()),
                                         Integer.parseInt(endMins.getText().toString()));
+                                FirebaseManager.addBetweenRule(prevSelectedItem.getPackageName().replace('.', '-'), ruleType);
                                 break;
                         }
-                        FirebaseManager.addRule(prevSelectedItem.getPackageName().replace('.', '-'), ruleType);
+
                         Toast.makeText(getApplicationContext(), "Your rule was saved", Toast.LENGTH_SHORT).show();
                         finish();
                     }catch (NumberFormatException e){
@@ -141,7 +144,18 @@ public class BlockAnAppActivity extends AppCompatActivity {
         final Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
         final PackageManager pm = getPackageManager();
+<<<<<<< HEAD
+        final List<ResolveInfo> pkgAppsList = pm.queryIntentActivities( mainIntent, 0);
+        Iterator<ResolveInfo> i = pkgAppsList.iterator();
+        while (i.hasNext()) {
+            ResolveInfo s = i.next();
+            if ((s.activityInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0) {
+                i.remove();
+            }
+        }
+=======
         final List<ResolveInfo> pkgAppsList = pm.queryIntentActivities(mainIntent, 0);
+>>>>>>> origin/newBranch
         ListAdapter adapter = new ListAdapter(this, R.layout.item_choose_app,
                 R.id.txtAppName, R.id.radio_btn, R.id.app_logo_choose, new ArrayList<ListItem>());
         appsList.setAdapter(adapter);
