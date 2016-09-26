@@ -37,5 +37,9 @@
     <string name="stats_pie">Pie chart</string>
     <string name="a">a</string>
     <string name="min_used">%d min.</string>
+    <string name="sec_used">%d sec.</string>
     <string name="radio_button_symbol">Radio button symbol</string>
+    <string name="colon">:</string>
+    <string name="loading">Loading&#8230;</string> <!-- &#8230; = "..." -->
+    <string name="no_data">No data</string>
 </resources>

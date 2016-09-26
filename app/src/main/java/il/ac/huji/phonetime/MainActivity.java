@@ -4,44 +4,70 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.ToggleButton;
 
-import com.firebase.client.Firebase;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 
-public class MainActivity extends AppCompatActivity
-        implements PieChartFragment.OnFragmentInteractionListener, TrendsFragment.OnFragmentInteractionListener{
+import il.ac.huji.phonetime.blocking.BlockedAppsActivity;
 
-    Bundle args = new Bundle();
+public class MainActivity extends AppCompatActivity implements ValueEventListener {
+
+    private static final long INTERVAL_TEN_SECONDS = 10 * 1000;
+    private static final String TAG = MainActivity.class.getSimpleName();
+    public enum TimeFrame {DAY, WEEK, MONTH}
+    public static HashMap<String, int[]>[] dataMaps = (HashMap<String, int[]>[]) new HashMap[TimeFrame.values().length];
+
+    private TimeFrame selectedTimeFrame;
+    private StatsFragment currentFragment;
+    private StatsFragment[] allFragments = new StatsFragment[3];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Firebase.setAndroidContext(this);
+        FirebaseManager.init(getBaseContext(), getContentResolver());
+        selectedTimeFrame = TimeFrame.DAY;
         setFragment(savedInstanceState);
         setBlockButton();
-        setToggels();
+        setToggles();
         scheduleAlarm();
     }
-    private static final long INTERVAL_TEN_SECONDS = 10 * 1000;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        for (int i=0; i<TimeFrame.values().length; i++){
+            dataMaps[i] = null;
+        }
+        updateFragment();
+    }
+
+    // Setup a recurring alarm every half hour
     public void scheduleAlarm() {
         // Construct an intent that will execute the AlarmReceiver
         Intent intent = new Intent(getApplicationContext(), AlarmRec.class);
         // Create a PendingIntent to be triggered when the alarm goes off
         final PendingIntent pIntent = PendingIntent.getBroadcast(this, AlarmRec.REQUEST_CODE,
                 intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        // Setup periodic alarm every 5 seconds
         long firstMillis = System.currentTimeMillis(); // alarm is set right away
         AlarmManager alarm = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-        alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, firstMillis, INTERVAL_TEN_SECONDS, pIntent);
+        // First parameter is the type: ELAPSED_REALTIME, ELAPSED_REALTIME_WAKEUP, RTC_WAKEUP
+        alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, firstMillis,
+                INTERVAL_TEN_SECONDS, pIntent);
     }
 
     // https://developer.android.com/training/basics/fragments/fragment-ui.html
@@ -55,27 +81,26 @@ public class MainActivity extends AppCompatActivity
                 return;
             }
 
-            // Create a new Fragment to be placed in the activity layout
-            PieChartFragment firstFragment = new PieChartFragment();
+            // Create new fragments to be placed in the activity layout
+            allFragments[0] = PieChartFragment.newInstance();
+            allFragments[1] = ListFragment.newInstance();
+            allFragments[2] = TrendsFragment.newInstance();
 
-            // In case this activity was started with special instructions from an
-            // Intent, pass the Intent's extras to the fragment as arguments
-            //firstFragment.setArguments(getIntent().getExtras());
-
-            HashMap<String, int[]> map = new HashMap<>();
-            map.put("Facebbok", new int[]{2,0,5,3});
-            map.put("Whatsapp", new int[]{4,1,0,2});
-            map.put("Calendar", new int[]{8,2,0,1});
-            map.put("Chrome", new int[]{2,5,0,1});
-
-            args.putSerializable(PieChartFragment.APP_TIMES, map);
-            firstFragment.setArguments(args);
-
-
-            // Add the fragment to the 'fragment_container' FrameLayout
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, firstFragment).commit();
+            showFragment(0);
         }
+    }
+
+    private void showFragment(int frag){
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        currentFragment = allFragments[frag];
+        if (currentFragment.isAdded()) ft.show(currentFragment);
+        else ft.add(R.id.fragment_container, currentFragment);
+        // Hide other fragments
+        for (int i = 0; i<allFragments.length; i++){
+            if(i != frag && allFragments[i].isAdded())
+                ft.hide(allFragments[i]);
+        }
+        ft.commit();
     }
 
     private void setBlockButton(){
@@ -101,11 +126,12 @@ public class MainActivity extends AppCompatActivity
         }
     };
 
-    private void setToggels(){
+    private void setToggles(){
         RadioGroup group = (RadioGroup)findViewById(R.id.typesGroup);
         if (group != null) {
             group.setOnCheckedChangeListener(ToggleListener);
         }
+
         group = (RadioGroup)findViewById(R.id.timeFrameGroup);
         if (group != null) {
             group.setOnCheckedChangeListener(ToggleListener);
@@ -113,38 +139,124 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void onTypeToggle(View view){
+        RadioGroup group = ((RadioGroup)view.getParent());
         int checkedId = view.getId();
+        if(group.getCheckedRadioButtonId() == checkedId) { //already checked
+            ((ToggleButton) view).setChecked(!((ToggleButton) view).isChecked());
+            return;
+        }
         ((RadioGroup)view.getParent()).check(checkedId);
         //replace fragment
-        Fragment newFrag;
         switch (checkedId){
             case R.id.btn_pie:
-                newFrag = new PieChartFragment();
-                newFrag.setArguments(args);
+                showFragment(0);
                 break;
             case R.id.btn_list:
-                newFrag = null;//TODO
+                showFragment(1);
                 break;
             case R.id.btn_trends:
-                newFrag = new TrendsFragment();
-                newFrag.setArguments(args);
+                showFragment(2);
                 break;
             default:
                 return;
         }
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, newFrag).commit();
+        updateFragment();
     }
 
     public void onTimeFrameToggle(View view){
+        RadioGroup group = ((RadioGroup)view.getParent());
         int checkedId = view.getId();
+        if(group.getCheckedRadioButtonId() == checkedId) { //already checked
+            ((ToggleButton) view).setChecked(!((ToggleButton) view).isChecked());
+            return;
+        }
         ((RadioGroup)view.getParent()).check(checkedId);
-        //TODO send this value to current fragment
+        switch (checkedId){
+            case R.id.btn_day:
+                selectedTimeFrame = TimeFrame.DAY;
+                break;
+            case R.id.btn_week:
+                selectedTimeFrame = TimeFrame.WEEK;
+                break;
+            default:
+                selectedTimeFrame = TimeFrame.MONTH;
+                break;
+        }
+        updateFragment();
+    }
+
+    private void updateFragment(){
+        currentFragment.showLoading();
+        if(dataMaps[selectedTimeFrame.ordinal()] == null){
+            dataMaps[selectedTimeFrame.ordinal()] = new HashMap<>();
+            FirebaseManager.getUsesList(this);
+        }else{
+            currentFragment.update(dataMaps[selectedTimeFrame.ordinal()]);
+            Log.d(TAG, "Updating fragment.");
+        }
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void onDataChange(DataSnapshot snapshot) {
+        HashMap<String, int[]> dataMap = dataMaps[selectedTimeFrame.ordinal()];
+        Calendar today = GregorianCalendar.getInstance();
+        dataMap.clear();
 
+        for (DataSnapshot useSnapshot: snapshot.getChildren()) {
+            Use use = useSnapshot.getValue(Use.class);
+            Calendar useTime = new GregorianCalendar();
+            useTime.setTimeInMillis(use.timeStamp);
+            switch (selectedTimeFrame){
+                case DAY:
+                    if(compareDates(useTime, today)){
+                        if(dataMap.containsKey(use.packageName)){
+                            dataMap.get(use.packageName)[useTime.get(Calendar.HOUR_OF_DAY)] += 10;
+                        }else{
+                            int[] times = new int[24];
+                            times[useTime.get(Calendar.HOUR_OF_DAY)] = 10;
+                            dataMap.put(use.packageName, times);
+                        }
+                    }
+                    break;
+                case WEEK:
+                    if(useTime.get(Calendar.WEEK_OF_YEAR) == today.get(Calendar.WEEK_OF_YEAR)
+                            && useTime.get(Calendar.YEAR) == today.get(Calendar.YEAR)){
+                        if(dataMap.containsKey(use.packageName)){
+                            dataMap.get(use.packageName)[useTime.get(Calendar.DAY_OF_WEEK)] += 10;
+                        }else{
+                            int[] times = new int[7];
+                            times[useTime.get(Calendar.DAY_OF_WEEK)] = 10;
+                            dataMap.put(use.packageName, times);
+                        }
+                    }
+                    break;
+                case MONTH:
+                    if(useTime.get(Calendar.MONTH) == today.get(Calendar.MONTH)
+                            && useTime.get(Calendar.YEAR) == today.get(Calendar.YEAR)){
+                        if(dataMap.containsKey(use.packageName)){
+                            dataMap.get(use.packageName)[useTime.get(Calendar.DAY_OF_MONTH)] += 10;
+                        }else{
+                            int[] times = new int[useTime.getActualMaximum(Calendar.DAY_OF_MONTH)];
+                            times[useTime.get(Calendar.DAY_OF_MONTH)] = 10;
+                            dataMap.put(use.packageName, times);
+                        }
+                    }
+                    break;
+            }
+        }
+        currentFragment.update(dataMap);
+        Log.d(TAG, "Updating fragment.");
+    }
+
+    @Override
+    public void onCancelled(DatabaseError databaseError) {
+        Log.e("Firebase", "onCancelled", databaseError.toException());
+    }
+
+    private boolean compareDates(Calendar a, Calendar b){
+        return a.get(Calendar.DAY_OF_MONTH) == b.get(Calendar.DAY_OF_MONTH)
+                && a.get(Calendar.MONTH) == b.get(Calendar.MONTH)
+                && a.get(Calendar.YEAR) == b.get(Calendar.YEAR);
     }
 }
 

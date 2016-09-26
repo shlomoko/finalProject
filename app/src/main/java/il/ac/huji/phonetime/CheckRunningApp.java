@@ -2,95 +2,131 @@ package il.ac.huji.phonetime;
 
 import android.app.ActivityManager;
 import android.app.IntentService;
+import android.app.Notification;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.telephony.TelephonyManager;
+import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.UUID;
 
-/**
- * Created by Shlomo on 28/07/2016.
- */
-public class CheckRunningApp extends IntentService {
+import il.ac.huji.phonetime.blocking.Rule;
+import il.ac.huji.phonetime.blocking.RuleAfter;
+import il.ac.huji.phonetime.blocking.RuleBetween;
+
+public class CheckRunningApp extends IntentService implements ValueEventListener {
+
     public CheckRunningApp() {
         super("CheckRunningApp");
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-    }
-
-    DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
+    static int notificationDelay = 0;
     String currentApp;
-    long currentTime;
+
     @Override
     protected void onHandleIntent(Intent intent) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            UsageStatsManager usm = (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);//"usagestats"
+            UsageStatsManager usm = (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);
             long time = System.currentTimeMillis();
             List<UsageStats> appList = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY,
                     time - 1000 * 1000, time);
+
             if (appList != null && appList.size() > 0) {
-                SortedMap<Long, UsageStats> mySortedMap = new TreeMap<Long, UsageStats>();
+                SortedMap<Long, UsageStats> mySortedMap = new TreeMap<>();
                 for (UsageStats usageStats : appList) {
-                    mySortedMap.put(usageStats.getLastTimeUsed(),
-                            usageStats);
+                    mySortedMap.put(usageStats.getLastTimeUsed(), usageStats);
                 }
-                if (mySortedMap != null && !mySortedMap.isEmpty()) {
-                    currentApp = mySortedMap.get(
-                            mySortedMap.lastKey()).getPackageName();
+                if (!mySortedMap.isEmpty()) {
+                    currentApp = mySortedMap.get(mySortedMap.lastKey()).getPackageName();
                 }
             }
         } else {
             ActivityManager am = (ActivityManager) getBaseContext().getSystemService(ACTIVITY_SERVICE);
-            currentApp = am.getRunningTasks(1).get(0).topActivity .getPackageName();
+            currentApp = am.getRunningTasks(1).get(0).topActivity.getPackageName();
+        }
 
-        }
-        final PackageManager pm = getApplicationContext().getPackageManager();
-        ApplicationInfo ai;
-        try {
-            ai = pm.getApplicationInfo( currentApp, 0);
-        } catch (final PackageManager.NameNotFoundException e) {
-            ai = null;
-        }
-        final String applicationName = (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
-        Date date = new Date();
-        writeNewUser(currentApp, date.getTime());
-        //Log.i("current_app_name", applicationName);//tasks.get(0).processName);
+        Date now = new Date();
+        writeNewUser(currentApp, now.getTime());
+        checkIfBlocked(currentApp);
     }
 
-    String deviceId = getDeviceId();
-
-    String s;
     private void writeNewUser(String packageName, long timeStamp) {
-//        use user = new use(packageName, timeStamp);
-//        s = String.valueOf(timeStamp);
-//        if (!(packageName.contains("desktop") || packageName.contains("Desktop"))) {
-//            mRootRef.child(deviceId).child("uses").child(s).setValue(user);
-//        }
+        Use use = new Use(packageName, timeStamp);
+        if (!(packageName.toLowerCase().contains("desktop") ||
+                packageName.toLowerCase().contains("launcher"))) {
+            FirebaseManager.addUse(use);
+        }
     }
 
-    protected String getDeviceId(){
-        final TelephonyManager tm = (TelephonyManager) getBaseContext().getSystemService(Context.TELEPHONY_SERVICE);
+    private void checkIfBlocked(String pkgName) {
+        Map<String, Rule> blocked = BaseActivity.blockedApps;
+        if (notificationDelay == 0) {
+            for(Map.Entry<String, Rule> entry : blocked.entrySet()) {
+                if (entry.getKey().replace('-', '.').equals(pkgName)) {
+                    Rule rule = entry.getValue();
+                    if (rule instanceof RuleAfter){
+                        RuleAfter ruleAfter = (RuleAfter) rule;
+                        Map<String, int[]> uses = MainActivity.dataMaps[ruleAfter.getFrameVal().ordinal()];
+                        // TODO - get real time data ^
+                        int secsUsed = Utils.sumArray(uses.get(pkgName));
+                        boolean isPassed = false;
+                        if (ruleAfter.getUnitsVal() == RuleAfter.TimeUnits.MINS){
+                            isPassed = secsUsed / 60 >= ruleAfter.getTime();
+                        }else if (ruleAfter.getUnitsVal() == RuleAfter.TimeUnits.HOURS){
+                            isPassed = secsUsed / 3600 >= ruleAfter.getTime();
+                        }
+                        if (isPassed){
+                            NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+                            builder.setContentTitle("STOP USING THIS APP")
+                                    .setContentText("you have surpassed the amount defined!")
+                                    .setDefaults(Notification.DEFAULT_ALL)
+                                    .setPriority(Notification.PRIORITY_HIGH);
+                            notificationDelay = 6; // set delay to 6*10 seconds = 1 minute
+                        }
+                    } else if (rule instanceof RuleBetween){
+                        Calendar now = GregorianCalendar.getInstance();
+                        RuleBetween ruleBetween = (RuleBetween) rule;
+                        Calendar from = new GregorianCalendar();
+                        from.set(Calendar.HOUR_OF_DAY, ruleBetween.getFromHours());
+                        from.set(Calendar.MINUTE, ruleBetween.getFromMinutes());
+                        Calendar to = new GregorianCalendar();
+                        to.set(Calendar.HOUR_OF_DAY, ruleBetween.getToHours());
+                        to.set(Calendar.MINUTE, ruleBetween.getToMinutes());
+                        if(now.after(from) && now.before(to)){
+                            NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+                            builder.setContentTitle("STOP USING THIS APP")
+                                    .setContentText("you do not want to be using this the app now!!")
+                                    .setDefaults(Notification.DEFAULT_ALL)
+                                    .setPriority(Notification.PRIORITY_HIGH);
+                            notificationDelay = 6; // set delay to 6*10 seconds = 1 minute
+                        }
+                    }
+                }
+            }
+        } else {
+            notificationDelay--;
+        }
+    }
 
-        String tmDevice = "" + tm.getDeviceId();
-        String tmSerial = "" + tm.getSimSerialNumber();
-        String androidId = "" + android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+    @Override
+    public void onDataChange(DataSnapshot dataSnapshot) {
 
-        UUID deviceUuid = new UUID(androidId.hashCode(), ((long)tmDevice.hashCode() << 32) | tmSerial.hashCode());
-        String deviceId = deviceUuid.toString();
-        return  deviceId;
+    }
+
+    @Override
+    public void onCancelled(DatabaseError databaseError) {
+        Log.e("Firebase", "onCancelled", databaseError.toException());
     }
 }
