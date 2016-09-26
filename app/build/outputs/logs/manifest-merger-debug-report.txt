@@ -123,7 +123,7 @@ MERGED from [com.android.support:support-v4:23.4.0] C:\Users\ADMIN\Documents\Pos
 	android:allowBackup
 		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:12:9-35
 	android:icon
-		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:13:9-43
+		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:13:9-49
 	android:theme
 		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:16:9-40
 activity#il.ac.huji.phonetime.MainActivity

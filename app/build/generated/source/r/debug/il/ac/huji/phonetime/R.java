@@ -2407,7 +2407,8 @@ containing a value of this type.
         public static final int ic_check_white_18dp=0x7f02007c;
         public static final int ic_close_white_18dp=0x7f02007d;
         public static final int ic_edit_white_18dp=0x7f02007e;
-        public static final int notification_template_icon_bg=0x7f02007f;
+        public static final int notification_template_icon_bg=0x7f020080;
+        public static final int phone_time_icon=0x7f02007f;
     }
     public static final class id {
         public static final int action0=0x7f0d009e;

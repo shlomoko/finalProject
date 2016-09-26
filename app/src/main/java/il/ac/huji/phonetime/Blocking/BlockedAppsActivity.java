@@ -21,7 +21,6 @@ import android.widget.TextView;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,25 +77,14 @@ public class BlockedAppsActivity extends AppCompatActivity implements ChildEvent
             Log.d(TAG, e.getLocalizedMessage());
             return;
         }
-        try{
-            RuleAfter rule = ruleSnapshot.getValue(RuleAfter.class);
-            mAdapter.add(new ListItem(pkgName, appName, appIcon, rule));
-        } catch (final DatabaseException e) {
-            RuleBetween rule = ruleSnapshot.getValue(RuleBetween.class);
-            mAdapter.add(new ListItem(pkgName, appName, appIcon, rule));
-        }
+
+        mAdapter.add(new ListItem(pkgName, appName, appIcon, Utils.getRuleObj(ruleSnapshot)));
     }
 
     @Override
     public void onChildChanged(DataSnapshot ruleSnapshot, String s) {
         String pkgName = ruleSnapshot.getKey().replace('-', '.');
-        try{
-            RuleAfter rule = ruleSnapshot.getValue(RuleAfter.class);
-            mAdapter.update(pkgName, rule);
-        } catch (final DatabaseException e) {
-            RuleBetween rule = ruleSnapshot.getValue(RuleBetween.class);
-            mAdapter.update(pkgName, rule);
-        }
+        mAdapter.update(pkgName, Utils.getRuleObj(ruleSnapshot));
     }
 
     @Override

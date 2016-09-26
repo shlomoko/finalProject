@@ -653,7 +653,8 @@ int drawable ic_add_white_48dp 0x7f02007b
 int drawable ic_check_white_18dp 0x7f02007c
 int drawable ic_close_white_18dp 0x7f02007d
 int drawable ic_edit_white_18dp 0x7f02007e
-int drawable notification_template_icon_bg 0x7f02007f
+int drawable notification_template_icon_bg 0x7f020080
+int drawable phone_time_icon 0x7f02007f
 int id action0 0x7f0d009e
 int id action_bar 0x7f0d0062
 int id action_bar_activity_content 0x7f0d0000
