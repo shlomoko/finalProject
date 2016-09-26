@@ -13,6 +13,7 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.AxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +47,8 @@ public class TrendsFragment extends StatsFragment{
     @Override
     protected void setContent() {
         List<ILineDataSet> dataSets = new ArrayList<>();
+        int numOfColors = ColorTemplate.JOYFUL_COLORS.length;
+        int color = 0;
         for (Map.Entry<String, int[]> entry : mData.entrySet()){
             try {
                 String appName = Utils.getAppName(getActivity().getApplicationContext(), entry.getKey());
@@ -55,7 +58,9 @@ public class TrendsFragment extends StatsFragment{
                 }
                 LineDataSet dataSet = new LineDataSet(entries, appName);
                 dataSet.setDrawValues(false);
+                dataSet.setColors(new int[]{ColorTemplate.JOYFUL_COLORS[color % numOfColors]});
                 dataSets.add(dataSet);
+                color++;
             } catch (PackageManager.NameNotFoundException e){
                 Log.d(TAG, e.getLocalizedMessage(), e);
             }

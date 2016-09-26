@@ -1,2 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merger version="3"><dataSet config="main"><source path="C:\Users\Shlomo\Documents\university\post pc\finalProject\finalProject\app\src\main\shaders"/></dataSet><dataSet config="debug"><source path="C:\Users\Shlomo\Documents\university\post pc\finalProject\finalProject\app\src\debug\shaders"/></dataSet></merger>
+<merger version="3"><dataSet config="main"><source path="C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\shaders"/></dataSet><dataSet config="debug"><source path="C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\debug\shaders"/></dataSet></merger>

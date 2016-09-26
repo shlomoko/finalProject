@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,10 +31,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import il.ac.huji.phonetime.FirebaseManager;
+import il.ac.huji.phonetime.MainActivity;
 import il.ac.huji.phonetime.R;
+import il.ac.huji.phonetime.Utils;
 
 public class BlockAnAppActivity extends AppCompatActivity {
 
+    private static final String TAG = BlockAnAppActivity.class.getSimpleName();
     private RadioGroup radioGroup;
     private EditText timeAmount;
     private Spinner timeFrameSpinner;
@@ -49,28 +53,64 @@ public class BlockAnAppActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_block_an_app);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         setComponents();
         setConfirm();
-        setRadio();
-        setList();
-        setContents(getIntent());
+        if (!setContents(getIntent())){
+            setRadio(R.id.rb_after);
+            setList();
+        }
     }
 
-    private void setContents(Intent intent){
-        if (null == intent) return;
+    private boolean setContents(Intent intent){
+        if (null == intent) return false;
         Bundle extras = intent.getExtras();
-        if (null == extras) return;
+        if (null == extras) return false;
         if (extras.containsKey("EXTRA_RULE") && extras.containsKey("EXTRA_PKG_NAME")) {
             Rule rule = (Rule) extras.getSerializable("EXTRA_RULE");
-            // TODO fill fields
+            if (rule instanceof RuleAfter){
+                setRadio(R.id.rb_after);
+                RuleAfter ruleAfter = (RuleAfter) rule;
+                timeAmount.setText(Integer.toString(ruleAfter.getTime()));
+                timeUnitsSpinner.setSelection(ruleAfter.getUnitsVal().ordinal());
+                timeFrameSpinner.setSelection(ruleAfter.getFrameVal().ordinal());
+            }else if (rule instanceof  RuleBetween){
+                setRadio(R.id.rb_between);
+                RuleBetween ruleBetween = (RuleBetween) rule;
+                startHours.setText(getTimeString(ruleBetween.getFromHours()));
+                startMins.setText(getTimeString(ruleBetween.getFromMinutes()));
+                endHours.setText(getTimeString(ruleBetween.getToHours()));
+                endMins.setText(getTimeString(ruleBetween.getToMinutes()));
+            }
+
             String pkgName = extras.getString("EXTRA_PKG_NAME");
-            // TODO set chosen app
-            // TODO disable apps list
+            try {
+                ArrayList<ListItem> list = new ArrayList<>();
+                String appName = Utils.getAppName(this, pkgName);
+                Drawable appIcon = Utils.getAppIcon(this, pkgName);
+                list.add(new ListItem(pkgName, appName, appIcon));
+                appsList.setAdapter(new ListAdapter(this, R.layout.item_choose_app,
+                        R.id.txtAppName, R.id.radio_btn, R.id.app_logo_choose, list));
+
+            } catch (PackageManager.NameNotFoundException e) {
+                Log.d(TAG, e.getLocalizedMessage(), e);
+                setList();
+            }
+            return true;
+        }else{
+            return false;
         }
+    }
+
+    private String getTimeString(int time){
+        if (time < 0)
+            return "00";
+        if (time < 10)
+            return "0" + time;
+        return "" + time;
     }
 
     private void setConfirm(){
@@ -87,15 +127,15 @@ public class BlockAnAppActivity extends AppCompatActivity {
                                         timeUnitsSpinner.getSelectedItemPosition() == 0 ?
                                                 RuleAfter.TimeUnits.MINS : RuleAfter.TimeUnits.HOURS,
                                         timeFrameSpinner.getSelectedItemPosition() == 0 ?
-                                                RuleAfter.TimeFrame.DAY : RuleAfter.TimeFrame.WEEK);
-                                FirebaseManager.addAfterRule(prevSelectedItem.getPackageName().replace('.', '-'), ruleType);
+                                                MainActivity.TimeFrame.DAY : MainActivity.TimeFrame.WEEK);
+                                FirebaseManager.addRule(prevSelectedItem.getPackageName().replace('.', '-'), ruleType);
                                 break;
                             default:
                                 ruleType = new RuleBetween(Integer.parseInt(startHours.getText().toString()),
                                         Integer.parseInt(startMins.getText().toString()),
                                         Integer.parseInt(endHours.getText().toString()),
                                         Integer.parseInt(endMins.getText().toString()));
-                                FirebaseManager.addBetweenRule(prevSelectedItem.getPackageName().replace('.', '-'), ruleType);
+                                FirebaseManager.addRule(prevSelectedItem.getPackageName().replace('.', '-'), ruleType);
                                 break;
                         }
 
@@ -121,7 +161,7 @@ public class BlockAnAppActivity extends AppCompatActivity {
         appsList =          (ListView)  findViewById(R.id.app_to_block);
     }
 
-    private void setRadio(){
+    private void setRadio(int checkedId){
         if (radioGroup != null) {
             radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                 @Override
@@ -136,16 +176,17 @@ public class BlockAnAppActivity extends AppCompatActivity {
                     endMins.setEnabled(!cond);
                 }
             });
-            radioGroup.check(R.id.rb_after);
+            radioGroup.check(checkedId);//R.id.rb_after
         }
     }
 
     private void setList() {
+        // get list of all installed apps
         final Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
         final PackageManager pm = getPackageManager();
-<<<<<<< HEAD
         final List<ResolveInfo> pkgAppsList = pm.queryIntentActivities( mainIntent, 0);
+        // filter system apps
         Iterator<ResolveInfo> i = pkgAppsList.iterator();
         while (i.hasNext()) {
             ResolveInfo s = i.next();
@@ -153,13 +194,13 @@ public class BlockAnAppActivity extends AppCompatActivity {
                 i.remove();
             }
         }
-=======
-        final List<ResolveInfo> pkgAppsList = pm.queryIntentActivities(mainIntent, 0);
->>>>>>> origin/newBranch
+        // set am empty adapter
         ListAdapter adapter = new ListAdapter(this, R.layout.item_choose_app,
                 R.id.txtAppName, R.id.radio_btn, R.id.app_logo_choose, new ArrayList<ListItem>());
         appsList.setAdapter(adapter);
+        // load the list of apps (with icons) to the adapter
         new ListLoader(adapter).execute(pkgAppsList.toArray(new ResolveInfo[pkgAppsList.size()]));
+        // set radio button behaviour to the list items
         appsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -212,7 +253,7 @@ public class BlockAnAppActivity extends AppCompatActivity {
                 prevSelectedView = itemView;
                 prevSelectedItem = (ListItem) appsList.getItemAtPosition(0);
                 radioView.setImageResource(android.R.drawable.radiobutton_on_background);
-            }else{
+            }else if (prevSelectedView != itemView){
                 radioView.setImageResource(android.R.drawable.radiobutton_off_background);
             }
             return itemView;

@@ -52,12 +52,12 @@ public class PieChartFragment extends StatsFragment {
             } catch (PackageManager.NameNotFoundException e) {
                 Log.d(TAG, e.getLocalizedMessage(), e);
             }
-
         }
+
         PieDataSet dataSet = new PieDataSet(entries, "");
         dataSet.setColors(ColorTemplate.JOYFUL_COLORS);
 
-        PieData data = new PieData(dataSet);
+        final PieData data = new PieData(dataSet);
         data.setValueFormatter(new ValueFormatter() {
             @Override
             public String getFormattedValue(float value, Entry e, int index, ViewPortHandler vph) {

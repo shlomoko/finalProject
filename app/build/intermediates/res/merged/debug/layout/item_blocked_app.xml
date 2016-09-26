@@ -22,7 +22,7 @@
         android:id="@+id/app_name"
         tools:text="Facebook"
         android:gravity="start"
-        android:textSize="36sp"/>
+        android:textSize="24sp"/>
 
     <LinearLayout
         android:layout_width="0dp"

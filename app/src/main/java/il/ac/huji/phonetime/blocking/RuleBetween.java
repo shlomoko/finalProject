@@ -7,7 +7,7 @@ public class RuleBetween implements Rule{
     private int toMinutes;
 
     public RuleBetween() {
-        // Default constructor required for calls to DataSnapshot.getValue(User.class)
+        // Default constructor required for calls to DataSnapshot.getValue(RuleBetween.class)
     }
 
     public RuleBetween(int fromHours, int fromMinutes, int toHours, int toMinutes) {

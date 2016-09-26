@@ -27,12 +27,12 @@ public class MainActivity extends AppCompatActivity implements ValueEventListene
 
     private static final long INTERVAL_TEN_SECONDS = 10 * 1000;
     private static final String TAG = MainActivity.class.getSimpleName();
+    public enum TimeFrame {DAY, WEEK, MONTH}
+    public static HashMap<String, int[]>[] dataMaps = (HashMap<String, int[]>[]) new HashMap[TimeFrame.values().length];
 
-    private enum TimeFrame {DAY, WEEK, MONTH}
     private TimeFrame selectedTimeFrame;
     private StatsFragment currentFragment;
     private StatsFragment[] allFragments = new StatsFragment[3];
-    private HashMap<String, int[]>[] dataMaps = (HashMap<String, int[]>[]) new HashMap[TimeFrame.values().length];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
