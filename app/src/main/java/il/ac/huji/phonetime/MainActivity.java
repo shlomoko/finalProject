@@ -18,9 +18,7 @@ import com.firebase.client.Firebase;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity
-        implements PieChartFragment.OnFragmentInteractionListener,
-                    TrendsFragment.OnFragmentInteractionListener,
-                    ListFragment.OnFragmentInteractionListener{
+        implements PieChartFragment.OnFragmentInteractionListener, TrendsFragment.OnFragmentInteractionListener{
 
     Bundle args = new Bundle();
 
@@ -35,20 +33,15 @@ public class MainActivity extends AppCompatActivity
         scheduleAlarm();
     }
     private static final long INTERVAL_TEN_SECONDS = 10 * 1000;
-
-    // Setup a recurring alarm every half hour
     public void scheduleAlarm() {
         // Construct an intent that will execute the AlarmReceiver
         Intent intent = new Intent(getApplicationContext(), AlarmRec.class);
         // Create a PendingIntent to be triggered when the alarm goes off
         final PendingIntent pIntent = PendingIntent.getBroadcast(this, AlarmRec.REQUEST_CODE,
                 intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        // Setup periodic alarm every 5 seconds
         long firstMillis = System.currentTimeMillis(); // alarm is set right away
         AlarmManager alarm = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-        // First parameter is the type: ELAPSED_REALTIME, ELAPSED_REALTIME_WAKEUP, RTC_WAKEUP
-        alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, firstMillis,
-                INTERVAL_TEN_SECONDS, pIntent);
+        alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, firstMillis, INTERVAL_TEN_SECONDS, pIntent);
     }
 
     // https://developer.android.com/training/basics/fragments/fragment-ui.html
@@ -73,10 +66,11 @@ public class MainActivity extends AppCompatActivity
             map.put("Facebbok", new int[]{2,0,5,3});
             map.put("Whatsapp", new int[]{4,1,0,2});
             map.put("Calendar", new int[]{8,2,0,1});
-            map.put("Chrome",   new int[]{2,5,0,1});
+            map.put("Chrome", new int[]{2,5,0,1});
 
             args.putSerializable(PieChartFragment.APP_TIMES, map);
             firstFragment.setArguments(args);
+
 
             // Add the fragment to the 'fragment_container' FrameLayout
             getSupportFragmentManager().beginTransaction()
@@ -129,8 +123,7 @@ public class MainActivity extends AppCompatActivity
                 newFrag.setArguments(args);
                 break;
             case R.id.btn_list:
-                newFrag = new ListFragment();
-                newFrag.setArguments(args);
+                newFrag = null;//TODO
                 break;
             case R.id.btn_trends:
                 newFrag = new TrendsFragment();
