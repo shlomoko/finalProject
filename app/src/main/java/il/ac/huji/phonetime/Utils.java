@@ -8,6 +8,8 @@ import android.graphics.drawable.Drawable;
 
 import com.google.firebase.database.DataSnapshot;
 
+import java.util.Calendar;
+
 import il.ac.huji.phonetime.blocking.Rule;
 import il.ac.huji.phonetime.blocking.RuleAfter;
 import il.ac.huji.phonetime.blocking.RuleBetween;
@@ -42,5 +44,11 @@ public class Utils {
             return ruleSnapshot.getValue(RuleBetween.class);
         }
         return ruleSnapshot.getValue(RuleAfter.class);
+    }
+
+    public static boolean compareDates(Calendar a, Calendar b){
+        return a.get(Calendar.DAY_OF_MONTH) == b.get(Calendar.DAY_OF_MONTH)
+                && a.get(Calendar.MONTH) == b.get(Calendar.MONTH)
+                && a.get(Calendar.YEAR) == b.get(Calendar.YEAR);
     }
 }

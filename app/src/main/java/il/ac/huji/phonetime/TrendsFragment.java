@@ -59,6 +59,7 @@ public class TrendsFragment extends StatsFragment{
                 LineDataSet dataSet = new LineDataSet(entries, appName);
                 dataSet.setDrawValues(false);
                 dataSet.setColors(new int[]{ColorTemplate.JOYFUL_COLORS[color % numOfColors]});
+                dataSet.setDrawCircles(false);
                 dataSets.add(dataSet);
                 color++;
             } catch (PackageManager.NameNotFoundException e){

@@ -10,8 +10,6 @@ import android.view.Display;
 
 public class AlarmRec extends BroadcastReceiver {
     public static final int REQUEST_CODE = 12345;
-    public static final String ACTION = "com.codepath.example.servicesdemo.alarm";
-    private static final String TAG = "AlarmReceiver";
 
     // Triggered by the Alarm periodically (starts the service to run task)
     @Override

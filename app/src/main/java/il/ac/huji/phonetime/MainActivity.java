@@ -25,11 +25,18 @@ import il.ac.huji.phonetime.blocking.BlockedAppsActivity;
 
 public class MainActivity extends AppCompatActivity implements ValueEventListener {
 
+    static final RadioGroup.OnCheckedChangeListener ToggleListener = new RadioGroup.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(final RadioGroup radioGroup, final int i) {
+            for (int j = 0; j < radioGroup.getChildCount(); j++) {
+                final ToggleButton view = (ToggleButton) radioGroup.getChildAt(j);
+                view.setChecked(view.getId() == i);
+            }
+        }
+    };
     private static final long INTERVAL_TEN_SECONDS = 10 * 1000;
     private static final String TAG = MainActivity.class.getSimpleName();
-    public enum TimeFrame {DAY, WEEK, MONTH}
-    public static HashMap<String, int[]>[] dataMaps = (HashMap<String, int[]>[]) new HashMap[TimeFrame.values().length];
-
+    private HashMap<String, int[]>[] dataMaps = (HashMap<String, int[]>[]) new HashMap[TimeFrame.values().length];
     private TimeFrame selectedTimeFrame;
     private StatsFragment currentFragment;
     private StatsFragment[] allFragments = new StatsFragment[3];
@@ -116,16 +123,6 @@ public class MainActivity extends AppCompatActivity implements ValueEventListene
         }
     }
 
-    static final RadioGroup.OnCheckedChangeListener ToggleListener = new RadioGroup.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(final RadioGroup radioGroup, final int i) {
-            for (int j = 0; j < radioGroup.getChildCount(); j++) {
-                final ToggleButton view = (ToggleButton) radioGroup.getChildAt(j);
-                view.setChecked(view.getId() == i);
-            }
-        }
-    };
-
     private void setToggles(){
         RadioGroup group = (RadioGroup)findViewById(R.id.typesGroup);
         if (group != null) {
@@ -202,46 +199,48 @@ public class MainActivity extends AppCompatActivity implements ValueEventListene
         Calendar today = GregorianCalendar.getInstance();
         dataMap.clear();
 
-        for (DataSnapshot useSnapshot: snapshot.getChildren()) {
-            Use use = useSnapshot.getValue(Use.class);
-            Calendar useTime = new GregorianCalendar();
-            useTime.setTimeInMillis(use.timeStamp);
-            switch (selectedTimeFrame){
-                case DAY:
-                    if(compareDates(useTime, today)){
-                        if(dataMap.containsKey(use.packageName)){
-                            dataMap.get(use.packageName)[useTime.get(Calendar.HOUR_OF_DAY)] += 10;
-                        }else{
-                            int[] times = new int[24];
-                            times[useTime.get(Calendar.HOUR_OF_DAY)] = 10;
-                            dataMap.put(use.packageName, times);
+        for (DataSnapshot pkgSnapshot: snapshot.getChildren()) {
+            String packageName = pkgSnapshot.getKey().replace('-', '.');
+            for (DataSnapshot timeSnapshot: pkgSnapshot.getChildren()){
+                Calendar useTime = new GregorianCalendar();
+                useTime.setTimeInMillis(timeSnapshot.getValue(Long.class));
+                switch (selectedTimeFrame){
+                    case DAY:
+                        if(Utils.compareDates(useTime, today)){
+                            if(dataMap.containsKey(packageName)){
+                                dataMap.get(packageName)[useTime.get(Calendar.HOUR_OF_DAY)] += 10;
+                            }else{
+                                int[] times = new int[24];
+                                times[useTime.get(Calendar.HOUR_OF_DAY)] = 10;
+                                dataMap.put(packageName, times);
+                            }
                         }
-                    }
-                    break;
-                case WEEK:
-                    if(useTime.get(Calendar.WEEK_OF_YEAR) == today.get(Calendar.WEEK_OF_YEAR)
-                            && useTime.get(Calendar.YEAR) == today.get(Calendar.YEAR)){
-                        if(dataMap.containsKey(use.packageName)){
-                            dataMap.get(use.packageName)[useTime.get(Calendar.DAY_OF_WEEK)] += 10;
-                        }else{
-                            int[] times = new int[7];
-                            times[useTime.get(Calendar.DAY_OF_WEEK)] = 10;
-                            dataMap.put(use.packageName, times);
+                        break;
+                    case WEEK:
+                        if(useTime.get(Calendar.WEEK_OF_YEAR) == today.get(Calendar.WEEK_OF_YEAR)
+                                && useTime.get(Calendar.YEAR) == today.get(Calendar.YEAR)){
+                            if(dataMap.containsKey(packageName)){
+                                dataMap.get(packageName)[useTime.get(Calendar.DAY_OF_WEEK)] += 10;
+                            }else{
+                                int[] times = new int[7];
+                                times[useTime.get(Calendar.DAY_OF_WEEK)] = 10;
+                                dataMap.put(packageName, times);
+                            }
                         }
-                    }
-                    break;
-                case MONTH:
-                    if(useTime.get(Calendar.MONTH) == today.get(Calendar.MONTH)
-                            && useTime.get(Calendar.YEAR) == today.get(Calendar.YEAR)){
-                        if(dataMap.containsKey(use.packageName)){
-                            dataMap.get(use.packageName)[useTime.get(Calendar.DAY_OF_MONTH)] += 10;
-                        }else{
-                            int[] times = new int[useTime.getActualMaximum(Calendar.DAY_OF_MONTH)];
-                            times[useTime.get(Calendar.DAY_OF_MONTH)] = 10;
-                            dataMap.put(use.packageName, times);
+                        break;
+                    case MONTH:
+                        if(useTime.get(Calendar.MONTH) == today.get(Calendar.MONTH)
+                                && useTime.get(Calendar.YEAR) == today.get(Calendar.YEAR)){
+                            if(dataMap.containsKey(packageName)){
+                                dataMap.get(packageName)[useTime.get(Calendar.DAY_OF_MONTH)] += 10;
+                            }else{
+                                int[] times = new int[useTime.getActualMaximum(Calendar.DAY_OF_MONTH)];
+                                times[useTime.get(Calendar.DAY_OF_MONTH)] = 10;
+                                dataMap.put(packageName, times);
+                            }
                         }
-                    }
-                    break;
+                        break;
+                }
             }
         }
         currentFragment.update(dataMap);
@@ -253,10 +252,6 @@ public class MainActivity extends AppCompatActivity implements ValueEventListene
         Log.e("Firebase", "onCancelled", databaseError.toException());
     }
 
-    private boolean compareDates(Calendar a, Calendar b){
-        return a.get(Calendar.DAY_OF_MONTH) == b.get(Calendar.DAY_OF_MONTH)
-                && a.get(Calendar.MONTH) == b.get(Calendar.MONTH)
-                && a.get(Calendar.YEAR) == b.get(Calendar.YEAR);
-    }
+    public enum TimeFrame {DAY, WEEK, MONTH}
 }
 

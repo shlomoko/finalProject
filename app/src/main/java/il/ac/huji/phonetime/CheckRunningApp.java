@@ -2,7 +2,7 @@ package il.ac.huji.phonetime;
 
 import android.app.ActivityManager;
 import android.app.IntentService;
-import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.Context;
@@ -17,6 +17,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
@@ -28,15 +29,18 @@ import il.ac.huji.phonetime.blocking.RuleBetween;
 
 public class CheckRunningApp extends IntentService implements ValueEventListener {
 
-    public CheckRunningApp() {
-        super("CheckRunningApp");
-    }
+    public static Map<String, Rule> blockedApps = new HashMap<>();
+    private static int notificationDelay = 0;
+    private static String checkedPkg;
+    private static RuleAfter checkedRule;
 
-    static int notificationDelay = 0;
-    String currentApp;
+    public CheckRunningApp() {
+        super(CheckRunningApp.class.getSimpleName());
+    }
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        String currentApp = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             UsageStatsManager usm = (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);
             long time = System.currentTimeMillis();
@@ -57,9 +61,11 @@ public class CheckRunningApp extends IntentService implements ValueEventListener
             currentApp = am.getRunningTasks(1).get(0).topActivity.getPackageName();
         }
 
-        Date now = new Date();
-        writeNewUser(currentApp, now.getTime());
-        checkIfBlocked(currentApp);
+        if (currentApp != null){
+            Date now = new Date();
+            writeNewUser(currentApp, now.getTime());
+            checkIfBlocked(currentApp);
+        }
     }
 
     private void writeNewUser(String packageName, long timeStamp) {
@@ -71,48 +77,17 @@ public class CheckRunningApp extends IntentService implements ValueEventListener
     }
 
     private void checkIfBlocked(String pkgName) {
-        Map<String, Rule> blocked = BaseActivity.blockedApps;
+        pkgName = pkgName.replace('.', '-');
+        if (!blockedApps.containsKey(pkgName)) return;
         if (notificationDelay == 0) {
-            for(Map.Entry<String, Rule> entry : blocked.entrySet()) {
-                if (entry.getKey().replace('-', '.').equals(pkgName)) {
-                    Rule rule = entry.getValue();
-                    if (rule instanceof RuleAfter){
-                        RuleAfter ruleAfter = (RuleAfter) rule;
-                        Map<String, int[]> uses = MainActivity.dataMaps[ruleAfter.getFrameVal().ordinal()];
-                        // TODO - get real time data ^
-                        int secsUsed = Utils.sumArray(uses.get(pkgName));
-                        boolean isPassed = false;
-                        if (ruleAfter.getUnitsVal() == RuleAfter.TimeUnits.MINS){
-                            isPassed = secsUsed / 60 >= ruleAfter.getTime();
-                        }else if (ruleAfter.getUnitsVal() == RuleAfter.TimeUnits.HOURS){
-                            isPassed = secsUsed / 3600 >= ruleAfter.getTime();
-                        }
-                        if (isPassed){
-                            NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-                            builder.setContentTitle("STOP USING THIS APP")
-                                    .setContentText("you have surpassed the amount defined!")
-                                    .setDefaults(Notification.DEFAULT_ALL)
-                                    .setPriority(Notification.PRIORITY_HIGH);
-                            notificationDelay = 6; // set delay to 6*10 seconds = 1 minute
-                        }
-                    } else if (rule instanceof RuleBetween){
-                        Calendar now = GregorianCalendar.getInstance();
-                        RuleBetween ruleBetween = (RuleBetween) rule;
-                        Calendar from = new GregorianCalendar();
-                        from.set(Calendar.HOUR_OF_DAY, ruleBetween.getFromHours());
-                        from.set(Calendar.MINUTE, ruleBetween.getFromMinutes());
-                        Calendar to = new GregorianCalendar();
-                        to.set(Calendar.HOUR_OF_DAY, ruleBetween.getToHours());
-                        to.set(Calendar.MINUTE, ruleBetween.getToMinutes());
-                        if(now.after(from) && now.before(to)){
-                            NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-                            builder.setContentTitle("STOP USING THIS APP")
-                                    .setContentText("you do not want to be using this the app now!!")
-                                    .setDefaults(Notification.DEFAULT_ALL)
-                                    .setPriority(Notification.PRIORITY_HIGH);
-                            notificationDelay = 6; // set delay to 6*10 seconds = 1 minute
-                        }
-                    }
+            Rule rule = blockedApps.get(pkgName);
+            if (rule instanceof RuleAfter){
+                checkedPkg = pkgName;
+                checkedRule = (RuleAfter) rule;
+                FirebaseManager.getUsesList(this, pkgName);
+            } else if (rule instanceof RuleBetween){
+                if(rule.isViolated()){
+                    notify("you do not want to be using this the app now!!");
                 }
             }
         } else {
@@ -121,12 +96,46 @@ public class CheckRunningApp extends IntentService implements ValueEventListener
     }
 
     @Override
-    public void onDataChange(DataSnapshot dataSnapshot) {
+    public void onDataChange(DataSnapshot pkgSnapshot) {
+        if (!pkgSnapshot.getKey().equals(checkedPkg)) return;
+        int secsUsed = 0;
+        Calendar today = GregorianCalendar.getInstance();
+        for (DataSnapshot timeSnapshot: pkgSnapshot.getChildren()){
+            Calendar useTime = new GregorianCalendar();
+            useTime.setTimeInMillis(timeSnapshot.getValue(Long.class));
+            switch (checkedRule.getFrameVal()){
+                case DAY:
+                    if(Utils.compareDates(useTime, today)){
+                        secsUsed += 10;
+                    }
+                    break;
+                case WEEK:
+                    if(useTime.get(Calendar.WEEK_OF_YEAR) == today.get(Calendar.WEEK_OF_YEAR)
+                            && useTime.get(Calendar.YEAR) == today.get(Calendar.YEAR)){
+                        secsUsed += 10;
+                    }
+                    break;
+            }
+        }
 
+        if (checkedRule.isViolated(secsUsed)){
+            notify("you have surpassed the amount defined!");
+        }
     }
 
     @Override
     public void onCancelled(DatabaseError databaseError) {
         Log.e("Firebase", "onCancelled", databaseError.toException());
+    }
+
+    private void notify(String description){
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        builder.setContentTitle("STOP USING THIS APP")
+                .setContentText(description)
+                .setSmallIcon(R.drawable.phone_time_icon);
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.notify(1, builder.build());
+        notificationDelay = 6; // set delay to 6*10 seconds = 1 minute
     }
 }

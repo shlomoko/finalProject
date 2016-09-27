@@ -5,12 +5,9 @@ import com.google.firebase.database.Exclude;
 import il.ac.huji.phonetime.MainActivity;
 
 public class RuleAfter implements Rule{
-    public enum TimeUnits {MINS, HOURS}
-
     private int time;
     private TimeUnits units;
     private MainActivity.TimeFrame frame;
-
     public RuleAfter() {
         // Default constructor required for calls to DataSnapshot.getValue(RuleAfter.class)
     }
@@ -19,6 +16,17 @@ public class RuleAfter implements Rule{
         this.time = time;
         this.units = units;
         this.frame = frame;
+    }
+
+    @Override
+    public boolean isViolated(int... params) {
+        int secsUsed = params[0];
+        if (TimeUnits.MINS == units){
+            return secsUsed / 60 >= time;
+        }else if (TimeUnits.HOURS == units){
+            return secsUsed / 3600 >= time;
+        }
+        return false;
     }
 
     public int getTime() {
@@ -63,4 +71,6 @@ public class RuleAfter implements Rule{
     public void setFrame(String val){
         frame = MainActivity.TimeFrame.valueOf(val);
     }
+
+    public enum TimeUnits {MINS, HOURS}
 }

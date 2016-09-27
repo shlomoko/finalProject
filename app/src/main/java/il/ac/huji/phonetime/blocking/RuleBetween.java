@@ -1,5 +1,8 @@
 package il.ac.huji.phonetime.blocking;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 public class RuleBetween implements Rule{
     private int fromHours;
     private int fromMinutes;
@@ -31,5 +34,17 @@ public class RuleBetween implements Rule{
 
     public int getToMinutes() {
         return toMinutes;
+    }
+
+    @Override
+    public boolean isViolated(int... params) {
+        Calendar now = GregorianCalendar.getInstance();
+        Calendar from = new GregorianCalendar();
+        from.set(Calendar.HOUR_OF_DAY, fromHours);
+        from.set(Calendar.MINUTE, fromMinutes);
+        Calendar to = new GregorianCalendar();
+        to.set(Calendar.HOUR_OF_DAY, toHours);
+        to.set(Calendar.MINUTE, toMinutes);
+        return now.after(from) && now.before(to);
     }
 }

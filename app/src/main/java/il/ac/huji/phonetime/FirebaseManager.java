@@ -26,7 +26,7 @@ public class FirebaseManager {
     }
 
     public static void addUse(Use use){
-        mRootRef.child(phoneIdHashed).child(USES).push().setValue(use);
+        mRootRef.child(phoneIdHashed).child(USES).child(use.packageName.replace('.','-')).push().setValue(use.timeStamp);
     }
     
     public static void addRule(String pkgName, Rule rule){
@@ -35,6 +35,10 @@ public class FirebaseManager {
 
     public static void getUsesList(ValueEventListener listener){
         mRootRef.child(phoneIdHashed).child(USES).addListenerForSingleValueEvent(listener);
+    }
+
+    public static void getUsesList (ValueEventListener listener, String pkgName){
+        mRootRef.child(phoneIdHashed).child(USES).child(pkgName).addListenerForSingleValueEvent(listener);
     }
 
     public static void getRulesChanges(ChildEventListener listener){

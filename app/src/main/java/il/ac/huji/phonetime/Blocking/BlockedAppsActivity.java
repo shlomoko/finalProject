@@ -21,10 +21,12 @@ import android.widget.TextView;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import il.ac.huji.phonetime.CheckRunningApp;
 import il.ac.huji.phonetime.FirebaseManager;
 import il.ac.huji.phonetime.R;
 import il.ac.huji.phonetime.Utils;
@@ -63,6 +65,26 @@ public class BlockedAppsActivity extends AppCompatActivity implements ChildEvent
         }
         if(getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        FirebaseManager.getRulesList(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                CheckRunningApp.blockedApps.clear();
+                for (DataSnapshot blockedSnapshot : snapshot.getChildren()) {
+                    CheckRunningApp.blockedApps.put(blockedSnapshot.getKey(), Utils.getRuleObj(blockedSnapshot));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e(TAG, databaseError.getMessage(), databaseError.toException());
+            }
+        });
     }
 
     @Override
