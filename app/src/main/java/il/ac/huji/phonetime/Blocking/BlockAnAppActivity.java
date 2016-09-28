@@ -38,6 +38,7 @@ import il.ac.huji.phonetime.Utils;
 public class BlockAnAppActivity extends AppCompatActivity {
 
     private static final String TAG = BlockAnAppActivity.class.getSimpleName();
+    // <editor-fold desc="view widgets">
     private RadioGroup radioGroup;
     private EditText timeAmount;
     private Spinner timeFrameSpinner;
@@ -46,7 +47,8 @@ public class BlockAnAppActivity extends AppCompatActivity {
     private EditText startMins;
     private EditText endHours;
     private EditText endMins;
-    private ListView appsList;
+    private ListView appsListView;
+    // </editor-fold>
     private View prevSelectedView;
     private ListItem prevSelectedItem;
 
@@ -92,7 +94,7 @@ public class BlockAnAppActivity extends AppCompatActivity {
                 String appName = Utils.getAppName(this, pkgName);
                 Drawable appIcon = Utils.getAppIcon(this, pkgName);
                 list.add(new ListItem(pkgName, appName, appIcon));
-                appsList.setAdapter(new ListAdapter(this, R.layout.item_choose_app,
+                appsListView.setAdapter(new ListAdapter(this, R.layout.item_choose_app,
                         R.id.txtAppName, R.id.radio_btn, R.id.app_logo_choose, list));
 
             } catch (PackageManager.NameNotFoundException e) {
@@ -119,6 +121,9 @@ public class BlockAnAppActivity extends AppCompatActivity {
             okButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    if (null == prevSelectedItem){
+                        Toast.makeText(getApplicationContext(), "Please select an app from the list", Toast.LENGTH_LONG).show();
+                    }
                     try{
                         Rule ruleType;
                         switch (radioGroup.getCheckedRadioButtonId()){
@@ -158,7 +163,7 @@ public class BlockAnAppActivity extends AppCompatActivity {
         startMins =         (EditText)  findViewById(R.id.start_min);
         endHours =          (EditText)  findViewById(R.id.end_hours);
         endMins =           (EditText)  findViewById(R.id.end_min);
-        appsList =          (ListView)  findViewById(R.id.app_to_block);
+        appsListView =          (ListView)  findViewById(R.id.app_to_block);
     }
 
     private void setRadio(int checkedId){
@@ -197,65 +202,69 @@ public class BlockAnAppActivity extends AppCompatActivity {
         // set am empty adapter
         ListAdapter adapter = new ListAdapter(this, R.layout.item_choose_app,
                 R.id.txtAppName, R.id.radio_btn, R.id.app_logo_choose, new ArrayList<ListItem>());
-        appsList.setAdapter(adapter);
+        appsListView.setAdapter(adapter);
         // load the list of apps (with icons) to the adapter
         new ListLoader(adapter).execute(pkgAppsList.toArray(new ResolveInfo[pkgAppsList.size()]));
         // set radio button behaviour to the list items
-        appsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        appsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(prevSelectedView != null){
-                    ImageView prevImage = (ImageView) prevSelectedView.findViewById(R.id.radio_btn);
+                    ImageView prevImage = ((ListAdapter.ViewHolder) prevSelectedView.getTag()).radioView;
                     prevImage.setImageResource(android.R.drawable.radiobutton_off_background);
+                    prevSelectedItem.setSelected(false);
                 }
-                ImageView image = (ImageView)view.findViewById(R.id.radio_btn);
+                ImageView image = ((ListAdapter.ViewHolder) view.getTag()).radioView;
                 image.setImageResource(android.R.drawable.radiobutton_on_background);
                 prevSelectedView = view;
-                prevSelectedItem = (ListItem) appsList.getItemAtPosition(position);
+                prevSelectedItem = (ListItem) appsListView.getAdapter().getItem(position);
+                prevSelectedItem.setSelected(true);
+                Log.d("LIST VIEW", "Selected: " + prevSelectedItem.getAppName());
             }
         });
     }
 
     private class ListAdapter extends ArrayAdapter<ListItem> {
 
+        private class ViewHolder{
+            TextView nameView;
+            ImageView iconView;
+            ImageView radioView;
+        }
+
         private int itemLayoutId;
         private int nameViewId;
         private int iconViewId;
         private int radioViewId;
-        private Context context;
-        List<ListItem> list;
+
 
         public ListAdapter(Context context, int resource, int nameViewResourceId,
                            int checkedViewResourceId, int iconViewResourceId, List<ListItem> apps) {
-            super(context, resource, nameViewResourceId, apps);
-            this.context = context;
-            this.itemLayoutId = resource;
+            super(context, resource, apps);
+            itemLayoutId = resource;
             nameViewId = nameViewResourceId;
             iconViewId = iconViewResourceId;
             radioViewId = checkedViewResourceId;
-            list = apps;
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View itemView = super.getView(position, convertView, parent);
+        public View getView(int position, View itemView, ViewGroup parent) {
+            ListItem item =  getItem(position);
+            ViewHolder viewHolder;
             if (null == itemView){
-                itemView = LayoutInflater.from(context).inflate(itemLayoutId, parent, false);
+                viewHolder = new ViewHolder();
+                itemView = LayoutInflater.from(getContext()).inflate(itemLayoutId, parent, false);
+                viewHolder.nameView = (TextView) itemView.findViewById(nameViewId);
+                viewHolder.iconView = (ImageView) itemView.findViewById(iconViewId);
+                viewHolder.radioView = (ImageView) itemView.findViewById(radioViewId);
+                itemView.setTag(viewHolder);
+            }else{
+                viewHolder = (ViewHolder) itemView.getTag();
             }
-            TextView nameView = (TextView) itemView.findViewById(nameViewId);
-            ImageView iconView = (ImageView) itemView.findViewById(iconViewId);
-            ImageView radioView = (ImageView) itemView.findViewById(radioViewId);
 
-            ListItem item = list.get(position);
-            nameView.setText(item.getAppName());
-            iconView.setImageDrawable(item.getAppIcon());
-            if (0 == position && null == prevSelectedView){
-                prevSelectedView = itemView;
-                prevSelectedItem = (ListItem) appsList.getItemAtPosition(0);
-                radioView.setImageResource(android.R.drawable.radiobutton_on_background);
-            }else if (prevSelectedView != itemView){
-                radioView.setImageResource(android.R.drawable.radiobutton_off_background);
-            }
+            viewHolder.nameView.setText(item.getAppName());
+            viewHolder.iconView.setImageDrawable(item.getAppIcon());
+            viewHolder.radioView.setImageResource(item.getSelectionResId());
             return itemView;
         }
     }
@@ -264,13 +273,16 @@ public class BlockAnAppActivity extends AppCompatActivity {
         private String mPackageName;
         private String mName;
         private Drawable mIcon;
+        private int selectionResId;
 
         ListItem(String packageName, String appName, Drawable appIcon){
             mName = appName;
             mIcon = appIcon;
             mPackageName = packageName;
+            selectionResId = android.R.drawable.radiobutton_off_background;
         }
 
+        // <editor-fold desc="getters">
         public String getAppName() {
             return mName;
         }
@@ -282,9 +294,20 @@ public class BlockAnAppActivity extends AppCompatActivity {
         public String getPackageName() {
             return mPackageName;
         }
+
+        public int getSelectionResId(){
+            return selectionResId;
+        }
+        // </editor-fold>
+
+        public void setSelected(boolean selected){
+            selectionResId = selected ? android.R.drawable.radiobutton_on_background
+                    : android.R.drawable.radiobutton_off_background;
+        }
     }
 
     private class ListLoader extends AsyncTask<ResolveInfo, ListItem, Void> {
+
         private final WeakReference<ListAdapter> mAdapter;
         private final PackageManager pm = getPackageManager();
 
