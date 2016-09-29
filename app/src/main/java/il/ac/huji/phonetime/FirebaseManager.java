@@ -49,6 +49,10 @@ public class FirebaseManager {
         mRootRef.child(phoneIdHashed).child(RULES).child(pkgName).removeValue();
     }
 
+    public static void deleteUse(String pkgName, String key){
+        mRootRef.child(phoneIdHashed).child(USES).child(pkgName.replace('.','-')).child(key).removeValue();
+    }
+
     public static void getRulesList(ValueEventListener listener){
         mRootRef.child(phoneIdHashed).child(RULES).addListenerForSingleValueEvent(listener);
     }

@@ -1,14 +1,15 @@
 package il.ac.huji.phonetime;
 
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.app.IntentService;
-import android.app.NotificationManager;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.view.WindowManager;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -41,7 +42,8 @@ public class CheckRunningApp extends IntentService implements ValueEventListener
     @Override
     protected void onHandleIntent(Intent intent) {
         String currentApp = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP
+                && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
             UsageStatsManager usm = (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);
             long time = System.currentTimeMillis();
             List<UsageStats> appList = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY,
@@ -129,6 +131,22 @@ public class CheckRunningApp extends IntentService implements ValueEventListener
     }
 
     private void notify(String description){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(CheckRunningApp.this);
+        alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id){
+                notificationDelay = 6; // set delay to 6*10 seconds = 1 minute
+            }
+        });
+        alertDialogBuilder.setIcon(R.drawable.phone_time_icon)
+                .setTitle("STOP USING THIS APP")
+                .setMessage(description)
+                .setCancelable(true);
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        alertDialog.show();
+
+        /*
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.setContentTitle("STOP USING THIS APP")
                 .setContentText(description)
@@ -136,6 +154,8 @@ public class CheckRunningApp extends IntentService implements ValueEventListener
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(1, builder.build());
+
         notificationDelay = 6; // set delay to 6*10 seconds = 1 minute
+        */
     }
 }

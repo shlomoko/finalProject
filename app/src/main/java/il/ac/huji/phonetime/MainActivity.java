@@ -238,6 +238,9 @@ public class MainActivity extends AppCompatActivity implements ValueEventListene
                                 times[useTime.get(Calendar.DAY_OF_MONTH)] = 10;
                                 dataMap.put(packageName, times);
                             }
+                        }else{
+                            // delete irrelevant data from DB
+                            FirebaseManager.deleteUse(packageName, timeSnapshot.getKey());
                         }
                         break;
                 }

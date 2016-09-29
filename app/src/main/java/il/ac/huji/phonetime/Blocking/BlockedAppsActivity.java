@@ -66,8 +66,7 @@ public class BlockedAppsActivity extends AppCompatActivity implements ChildEvent
         if(getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
-
-
+    
     @Override
     protected void onPause() {
         super.onPause();

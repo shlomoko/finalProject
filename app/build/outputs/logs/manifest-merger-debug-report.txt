@@ -1,6 +1,6 @@
 -- Merging decision tree log ---
 manifest
-ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:2:1-51:12
+ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:2:1-52:12
 	package
 		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:4:5-35
 		INJECTED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml
@@ -36,8 +36,12 @@ uses-permission#android.permission.READ_PHONE_STATE
 ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:9:5-75
 	android:name
 		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:9:22-72
+uses-permission#android.permission.SYSTEM_ALERT_WINDOW
+ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:10:5-77
+	android:name
+		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:10:22-75
 application
-ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:11:5-49:19
+ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:12:5-50:19
 MERGED from [com.android.support:appcompat-v7:23.4.0] C:\Users\ADMIN\Documents\PostPC\finalProject\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.4.0\AndroidManifest.xml:25:5-20
 MERGED from [com.android.support:animated-vector-drawable:23.4.0] C:\Users\ADMIN\Documents\PostPC\finalProject\app\build\intermediates\exploded-aar\com.android.support\animated-vector-drawable\23.4.0\AndroidManifest.xml:7:5-20
 MERGED from [com.android.support:support-vector-drawable:23.4.0] C:\Users\ADMIN\Documents\PostPC\finalProject\app\build\intermediates\exploded-aar\com.android.support\support-vector-drawable\23.4.0\AndroidManifest.xml:7:5-20
@@ -117,67 +121,67 @@ MERGED from [com.google.android.gms:play-services-tasks:9.4.0] C:\Users\ADMIN\Do
 MERGED from [com.google.android.gms:play-services-basement:9.4.0] C:\Users\ADMIN\Documents\PostPC\finalProject\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-basement\9.4.0\AndroidManifest.xml:20:5-24:19
 MERGED from [com.android.support:support-v4:23.4.0] C:\Users\ADMIN\Documents\PostPC\finalProject\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.4.0\AndroidManifest.xml:22:5-20
 	android:label
-		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:14:9-41
+		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:15:9-41
 	android:supportsRtl
-		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:15:9-35
+		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:16:9-35
 	android:allowBackup
-		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:12:9-35
+		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:13:9-35
 	android:icon
-		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:13:9-49
+		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:14:9-49
 	android:theme
-		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:16:9-40
+		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:17:9-40
 activity#il.ac.huji.phonetime.MainActivity
-ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:18:9-24:20
+ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:19:9-25:20
 	android:name
-		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:18:19-47
+		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:19:19-47
 intent-filter#android.intent.action.MAIN+android.intent.category.LAUNCHER
-ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:19:13-23:29
+ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:20:13-24:29
 action#android.intent.action.MAIN
-ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:20:17-69
+ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:21:17-69
 	android:name
-		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:20:25-66
+		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:21:25-66
 category#android.intent.category.LAUNCHER
-ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:22:17-77
+ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:23:17-77
 	android:name
-		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:22:27-74
+		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:23:27-74
 activity#il.ac.huji.phonetime.blocking.BlockedAppsActivity
-ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:25:9-33:20
+ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:26:9-34:20
 	android:label
-		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:27:13-64
+		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:28:13-64
 	android:parentActivityName
-		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:28:13-55
+		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:29:13-55
 	android:theme
-		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:29:13-56
+		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:30:13-56
 	android:name
-		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:26:13-57
+		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:27:13-57
 meta-data#android.support.PARENT_ACTIVITY
-ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:30:13-32:69
+ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:31:13-33:69
 	android:value
-		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:32:17-66
+		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:33:17-66
 	android:name
-		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:31:17-63
+		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:32:17-63
 activity#il.ac.huji.phonetime.blocking.BlockAnAppActivity
-ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:34:9-39:20
+ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:35:9-40:20
 	android:label
-		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:36:13-64
+		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:37:13-64
 	android:parentActivityName
-		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:37:13-71
+		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:38:13-71
 	android:theme
-		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:38:13-56
+		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:39:13-56
 	android:name
-		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:35:13-56
+		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:36:13-56
 receiver#il.ac.huji.phonetime.AlarmRec
-ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:41:9-44:20
+ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:42:9-45:20
 	android:process
-		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:43:13-38
+		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:44:13-38
 	android:name
-		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:42:13-37
+		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:43:13-37
 service#il.ac.huji.phonetime.CheckRunningApp
-ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:46:9-48:40
+ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:47:9-49:40
 	android:exported
-		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:48:13-37
+		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:49:13-37
 	android:name
-		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:47:13-44
+		ADDED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml:48:13-44
 uses-sdk
 INJECTED from C:\Users\ADMIN\Documents\PostPC\finalProject\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 MERGED from [com.android.support:appcompat-v7:23.4.0] C:\Users\ADMIN\Documents\PostPC\finalProject\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.4.0\AndroidManifest.xml:21:5-23:78
