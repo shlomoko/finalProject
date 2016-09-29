@@ -1,14 +1,15 @@
 package il.ac.huji.phonetime;
 
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.app.IntentService;
-import android.app.NotificationManager;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.view.WindowManager;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -129,6 +130,26 @@ public class CheckRunningApp extends IntentService implements ValueEventListener
     }
 
     private void notify(String description){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(CheckRunningApp.this)
+            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id){
+                notificationDelay = 60;
+            }
+        })
+            .setNegativeButton("NO, continue blocking", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+            }
+        })
+            .setIcon(R.drawable.phone_time_icon)
+            .setTitle("STOP USING THIS APP")
+            .setMessage(description)
+            .setCancelable(true);
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        alertDialog.show();
+        /*
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.setContentTitle("STOP USING THIS APP")
                 .setContentText(description)
@@ -137,5 +158,6 @@ public class CheckRunningApp extends IntentService implements ValueEventListener
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(1, builder.build());
         notificationDelay = 6; // set delay to 6*10 seconds = 1 minute
+        */
     }
 }
