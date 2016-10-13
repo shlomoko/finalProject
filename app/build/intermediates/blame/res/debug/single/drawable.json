@@ -64,6 +64,10 @@
         "source": "C:\\Users\\Shlomo\\Documents\\university\\post pc\\finalProject\\finalProject\\app\\src\\main\\res\\drawable\\phone_time_icon.png"
     },
     {
+        "merged": "C:\\Users\\Shlomo\\Documents\\university\\post pc\\finalProject\\finalProject\\app\\build\\intermediates\\res\\merged\\debug\\drawable\\phone_time_icon_small.png",
+        "source": "C:\\Users\\Shlomo\\Documents\\university\\post pc\\finalProject\\finalProject\\app\\src\\main\\res\\drawable\\phone_time_icon_small.png"
+    },
+    {
         "merged": "C:\\Users\\Shlomo\\Documents\\university\\post pc\\finalProject\\finalProject\\app\\build\\intermediates\\res\\merged\\debug\\drawable\\common_google_signin_btn_icon_dark.xml",
         "source": "C:\\Users\\Shlomo\\Documents\\university\\post pc\\finalProject\\finalProject\\app\\build\\intermediates\\exploded-aar\\com.google.android.gms\\play-services-base\\9.4.0\\res\\drawable\\common_google_signin_btn_icon_dark.xml"
     },

@@ -8,6 +8,7 @@ import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.support.v4.app.NotificationCompat;
 import android.app.AlertDialog;
 import android.util.Log;
@@ -91,6 +92,7 @@ public class CheckRunningApp extends IntentService implements ValueEventListener
             } else if (rule instanceof RuleBetween){
                 if(rule.isViolated()){
                     notify("you do not want to be using this the app now!!");
+                    notificationDelay ++;
                 }
             }
         } else {
@@ -123,6 +125,7 @@ public class CheckRunningApp extends IntentService implements ValueEventListener
 
         if (checkedRule.isViolated(secsUsed)){
             notify("you have surpassed the amount defined!");
+            notificationDelay++;
         }
     }
 
@@ -143,8 +146,8 @@ public class CheckRunningApp extends IntentService implements ValueEventListener
                 dialog.dismiss();
             }
         })
-            .setIcon(R.drawable.phone_time_icon)
-            .setTitle("STOP USING THIS APP")
+            .setIcon(R.drawable.phone_time_icon_small)
+            .setTitle("    ")
             .setMessage(description + "\n Do you want us to leave you alone for 10 minutes?")
             .setCancelable(true);
 
