@@ -1,13 +1,15 @@
 package il.ac.huji.phonetime;
 
 import android.app.ActivityManager;
-import android.app.AlertDialog;
 import android.app.IntentService;
+import android.app.NotificationManager;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v4.app.NotificationCompat;
+import android.app.AlertDialog;
 import android.util.Log;
 import android.view.WindowManager;
 
@@ -42,12 +44,11 @@ public class CheckRunningApp extends IntentService implements ValueEventListener
     @Override
     protected void onHandleIntent(Intent intent) {
         String currentApp = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP
-                && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             UsageStatsManager usm = (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);
             long time = System.currentTimeMillis();
-            List<UsageStats> appList = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY,
-                    time - 1000 * 1000, time);
+            List<UsageStats> appList = usm.queryUsageStats(UsageStatsManager.INTERVAL_BEST,
+                    time - 1000 * 30, time);
 
             if (appList != null && appList.size() > 0) {
                 SortedMap<Long, UsageStats> mySortedMap = new TreeMap<>();
@@ -131,21 +132,25 @@ public class CheckRunningApp extends IntentService implements ValueEventListener
     }
 
     private void notify(String description){
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(CheckRunningApp.this);
-        alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(CheckRunningApp.this)
+            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id){
-                notificationDelay = 6; // set delay to 6*10 seconds = 1 minute
+                notificationDelay = 60;
             }
-        });
-        alertDialogBuilder.setIcon(R.drawable.phone_time_icon)
-                .setTitle("STOP USING THIS APP")
-                .setMessage(description)
-                .setCancelable(true);
+        })
+            .setNegativeButton("NO, continue blocking", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+            }
+        })
+            .setIcon(R.drawable.phone_time_icon)
+            .setTitle("STOP USING THIS APP")
+            .setMessage(description + "\n Do you want us to leave you alone for 10 minutes?")
+            .setCancelable(true);
 
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         alertDialog.show();
-
         /*
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.setContentTitle("STOP USING THIS APP")
@@ -154,7 +159,6 @@ public class CheckRunningApp extends IntentService implements ValueEventListener
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(1, builder.build());
-
         notificationDelay = 6; // set delay to 6*10 seconds = 1 minute
         */
     }
